@@ -39,7 +39,9 @@ export default function ProjectPreview({ project, active }: { project: Project; 
     setIndex((current) => (current + direction + images.length) % images.length);
   }
 
-  return <><div className="reel-preview" role="region" aria-roledescription="carousel" aria-label={`${project.title} previews`}
+  return <>
+    {active && images.length > 1 && <link rel="preload" as="image" href={images[(index + 1) % images.length].url} />}
+    <div className="reel-preview" role="region" aria-roledescription="carousel" aria-label={`${project.title} previews`}
     tabIndex={image ? 0 : undefined}
     aria-description={image ? images.length > 1 ? "Tap the center or press Enter to open the full image. Tap the edges or swipe to change preview. Hold to pause. Use Left and Right arrow keys when focused." : "Tap or press Enter to open the full image." : undefined}
     onPointerDown={(event) => {
