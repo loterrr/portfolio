@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
@@ -43,23 +44,25 @@ function EmptyState({ title, text }: { title: string; text: string }) {
   );
 }
 
-function ProjectCard({ project, interaction, onOpen }: { project: Project; interaction?: ProjectInteraction; onOpen: () => void }) {
+function ProjectCard({ project, interaction, href }: { project: Project; interaction?: ProjectInteraction; href: string }) {
   return (
-    <motion.button className="project-card" onClick={onOpen} whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
-      <div className="project-cover">
-        {project.thumbnail_url && <img src={project.thumbnail_url} alt={`${project.title} preview`} />}
-        {!project.thumbnail_url && <div className="cover-placeholder"><Code2 size={24} /><span>Project preview</span></div>}
-        {project.featured && <span className="featured-label">Featured</span>}
-        <span className="card-open"><ArrowRight size={17} /></span>
-      </div>
-      <div className="card-copy">
-        <span className="card-category">{project.category || "Project"}</span>
-        <h3>{project.title}</h3>
-        <p>{project.summary}</p>
-        <div className="card-foot"><span><Heart size={14} /> {interaction ? formatCount(interaction.like_count) : "—"}</span><span><MessageCircle size={14} /> {interaction ? formatCount(interaction.comment_count) : "—"}</span></div>
-      </div>
-      <span className="sr-only">Open {project.title} project reel</span>
-    </motion.button>
+    <Link href={href} prefetch={true} className="project-card-link">
+      <motion.div className="project-card" whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
+        <div className="project-cover">
+          {project.thumbnail_url && <img src={project.thumbnail_url} alt={`${project.title} preview`} />}
+          {!project.thumbnail_url && <div className="cover-placeholder"><Code2 size={24} /><span>Project preview</span></div>}
+          {project.featured && <span className="featured-label">Featured</span>}
+          <span className="card-open"><ArrowRight size={17} /></span>
+        </div>
+        <div className="card-copy">
+          <span className="card-category">{project.category || "Project"}</span>
+          <h3>{project.title}</h3>
+          <p>{project.summary}</p>
+          <div className="card-foot"><span><Heart size={14} /> {interaction ? formatCount(interaction.like_count) : "—"}</span><span><MessageCircle size={14} /> {interaction ? formatCount(interaction.comment_count) : "—"}</span></div>
+        </div>
+        <span className="sr-only">Open {project.title} project reel</span>
+      </motion.div>
+    </Link>
   );
 }
 
@@ -258,7 +261,13 @@ export function Reels({
   }, [activeIndex, commentsOpen, detailsOpen, filtered, onExit, reduceMotion]);
 
   return (
-    <motion.main className="reels-shell" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+    <motion.main
+      className="reels-shell"
+      initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.98 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.98 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+    >
       <header className="reels-top"><button className="back-link" onClick={onExit} aria-label="Back to profile"><ArrowLeft size={18} /> <span>Project Reels</span></button><span className="reel-count">{Math.max(activeIndex + 1, 1)} <i>/</i> {filtered.length}</span></header>
       <div className="reels-scroll" ref={rootRef}>
         {filtered.map((project, index) => {
@@ -338,15 +347,35 @@ export default function Portfolio() {
 
   function openProject(project: Project) { router.push(buildUrl({ project: project.slug, category, tab: "Projects" }), { scroll: false }); }
   function selectTab(next: Tab) {
-    if (next === "Projects") { router.push(buildUrl({ tab: next }), { scroll: false }); return; }
+    if (next === "Projects") {
+      const first = projects.find((project) => project.status === "published" && (!category || project.category === category) && matchesTechnology(project, technology));
+      const target = first ? projectReelUrl(first.slug, new URLSearchParams(category ? { category } : {})) : buildUrl({ tab: next });
+      router.push(target, { scroll: false });
+      return;
+    }
     router.replace(buildUrl({ tab: next }), { scroll: false });
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
   function selectCategory(next: string) { router.replace(buildUrl({ category: next }), { scroll: false }); }
   function selectTechnology(next: string, platform: "Web" | "Mobile") {
     setSearch("");
-    router.push(buildUrl({ project: null, category: next === "Git" ? "" : platform, technology: next, tab: "Projects" }), { scroll: false });
+    const matchedCategory = next === "Git" ? "" : platform;
+    const first = projects.find((project) => project.status === "published" && (!matchedCategory || project.category === matchedCategory) && matchesTechnology(project, next));
+    const targetParams = new URLSearchParams();
+    if (matchedCategory) targetParams.set("category", matchedCategory);
+    targetParams.set("technology", next);
+    const target = first ? projectReelUrl(first.slug, targetParams) : projectsFeedUrl(targetParams);
+    router.push(target, { scroll: false });
   }
+
+  useEffect(() => {
+    // Prefetch project reel routes so navigation is instant
+    for (const project of projects) {
+      if (project.status === "published") {
+        router.prefetch(projectReelUrl(project.slug, new URLSearchParams(category ? { category } : {})));
+      }
+    }
+  }, [category, router]);
 
   return (
     <MotionConfig reducedMotion="user">
@@ -388,7 +417,7 @@ export default function Portfolio() {
               <div className="section-head"><div><span className="eyebrow">Selected work</span><h2>Projects</h2><p>Explore the work, one project at a time.</p></div>{showSearch && <label className="search-field"><Search size={17} /><input autoFocus placeholder="Search projects" value={search} onChange={(event) => setSearch(event.target.value)} /></label>}</div>
               {technology && <div className="technology-filter"><span>Using {technology}</span><button className="icon-button" aria-label="Clear technology filter" onClick={() => router.replace(buildUrl({ technology: "" }), { scroll: false })}><X size={16} /></button></div>}
               {categories.length > 0 && <div className="filters" aria-label="Filter projects by category"><button className={!category ? "selected" : ""} onClick={() => selectCategory("")}>All <span>{projects.filter((project) => project.status === "published" && matchesTechnology(project, technology)).length}</span></button>{categoryCounts.map((item) => <button className={category === item.name ? "selected" : ""} key={item.name} onClick={() => selectCategory(item.name)}>{item.name} <span>{item.count}</span></button>)}</div>}
-              {visibleProjects.length ? <div className="project-grid">{visibleProjects.map((project) => <ProjectCard key={project.id} project={project} interaction={reactions.interactions.find((item) => item.projectId === project.id)} onOpen={() => openProject(project)} />)}</div> : <EmptyState title={search || category || technology ? "No matching projects" : "No projects published yet"} text={technology ? `No published projects use ${technology} with these filters yet.` : search || category ? "Try another search or category." : "Published projects will appear here."} />}
+              {visibleProjects.length ? <div className="project-grid">{visibleProjects.map((project) => <ProjectCard key={project.id} project={project} interaction={reactions.interactions.find((item) => item.projectId === project.id)} href={buildUrl({ project: project.slug, category, tab: "Projects" })} />)}</div> : <EmptyState title={search || category || technology ? "No matching projects" : "No projects published yet"} text={technology ? `No published projects use ${technology} with these filters yet.` : search || category ? "Try another search or category." : "Published projects will appear here."} />}
             </>}
             {tab === "Tech Stack" && <TechStack groups={technologyGroups} onSelect={selectTechnology} />}
             {tab === "Experience" && <ExperienceSection />}
