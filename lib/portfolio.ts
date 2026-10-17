@@ -40,6 +40,7 @@ export const profile = {
   available: true as boolean | null,
   email: "lutherjohnallen@gmail.com",
   avatarUrl: "/media/luther-profile.png",
+  bannerUrl: "/media/cover-banner.png",
   resumeUrl: "/documents/luther-john-allen-concepcion-cv.pdf",
   socialLinks: {
     github: "https://github.com/loterrr",

@@ -62,6 +62,7 @@
 - Added GitHub Actions CI workflow (`.github/workflows/ci.yml`) targeting push and pull requests on branch `main`, automating dependency caching, typechecking, the 30-test suite, and production build checks.
 - Reduced public Tech Stack catalog from 37 entries to 19 curated main-stack technologies (React, Next.js, TypeScript, Tailwind CSS, Flutter, Dart, Riverpod, Node.js, PHP, Supabase, Prisma, PostgreSQL, MySQL, SQLite, TensorFlow.js, Google ML Kit, Docker, Git, Vite) with 100% active project associations. TypeScript and all 30 tests passed.
 - Added Vercel, Render, GitHub, and GitHub Actions with dedicated SVG brand marks to DevOps & Tools and linked them to deployed live web projects. TypeScript and all 30 tests passed.
+- Converted personal cover banner from dynamic inline SVG to a high-resolution raster image asset (`public/media/cover-banner.png`), rendering via `<img>` in `app/profile-cover.tsx` and configurable via `profile.bannerUrl`. TypeScript and all 30 tests passed.
 
 
 

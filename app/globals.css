@@ -38,10 +38,7 @@ button:disabled { cursor: not-allowed; }
 .icon-button { display: inline-grid; place-items: center; width: 38px; height: 38px; padding: 0; background: transparent; border: 0; border-radius: 50%; cursor: pointer; color: #c5c3cc; transition: background .18s ease, color .18s ease; }
 .icon-button:hover { background: rgba(255,255,255,.08); color: var(--ink); }
 .profile-cover-wrap { position: relative; width: 100%; height: 115px; overflow: hidden; border-radius: 16px; margin: 4px 0 10px; border: 1px solid #232429; background: #090a0d; }
-.profile-cover-svg { width: 100%; height: 100%; display: block; }
-.cover-wordmark { text-shadow: 0 0 24px rgba(255,255,255,.2); }
-@keyframes coverPulse { 0%, 100% { opacity: .55; } 50% { opacity: .85; } }
-.cover-particles { animation: coverPulse 6s ease-in-out infinite; }
+.profile-cover-img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
 .profile-intro { display: grid; grid-template-columns: 64px minmax(0, 1fr); align-items: center; gap: 13px; padding: 8px 0 12px; }
 .profile-avatar { width: 64px; height: 64px; display: grid; place-items: center; overflow: hidden; border-radius: 50%; color: #eee; background: #222; }
 .profile-avatar img { display: block; width: 100%; height: 100%; border-radius: inherit; object-fit: cover; object-position: center; }
