@@ -322,13 +322,12 @@ export const projects: Project[] = [{
 }];
 
 export const technologies: Record<string, string[]> = {
-  Frontend: ["React", "Next.js", "TypeScript", "JavaScript", "Tailwind CSS", "Bootstrap", "Framer Motion", "Flutter", "Dart", "Riverpod"],
-  Backend: ["Node.js", "Fastify", "PHP", "Python", "Supabase", "Prisma", "Better Auth"],
-  Databases: ["MySQL", "PostgreSQL", "SQLite", "Redis", "PGlite"],
-  "AI / Machine Learning": ["OpenAI", "Local LLMs", "RAG", "Google ML Kit", "TensorFlow.js", "Google Cloud Vision API"],
-  DevOps: ["Docker", "Kubernetes", "GitHub Actions", "Vercel"],
+  Frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Flutter", "Dart", "Riverpod"],
+  Backend: ["Node.js", "PHP", "Supabase", "Prisma"],
+  Databases: ["PostgreSQL", "MySQL", "SQLite"],
+  "AI / Machine Learning": ["TensorFlow.js", "Google ML Kit"],
+  DevOps: ["Docker"],
   Tools: ["Git", "Vite"],
-  Other: ["WebRTC", "Leaflet", "Mapbox GL JS"],
 };
 
 export const experience: Array<{
