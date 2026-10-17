@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Code2, ImageIcon } from "lucide-react";
+import { Code2, ImageIcon, Maximize2 } from "lucide-react";
 import type { Project } from "@/lib/portfolio";
 import { validMediaUrl } from "@/lib/urls";
 import ImagePreview from "./image-preview";
@@ -76,6 +76,7 @@ export default function ProjectPreview({ project, active }: { project: Project; 
       ? <div className="reel-preview-empty"><ImageIcon size={34} /><span>Image unavailable</span></div>
       : <img className="preview-image" src={image.url} alt={image.alt} draggable={false} onError={() => setFailedUrl(image.url)} />
       : <div className="reel-preview-empty"><Code2 size={34} /><span>Project preview</span></div>}
+    {image && failedUrl !== image.url && <button type="button" className="icon-button preview-expand" aria-label="Expand image preview" title="View full image" onClick={() => setExpanded(true)}><Maximize2 size={18} /></button>}
     {images.length > 1 && <>
       <div className="preview-dots" role="group" aria-label="Choose preview">{images.map((item, position) => <button type="button" key={item.url} className="preview-dot" aria-label={`Show preview ${position + 1} of ${images.length}`} aria-current={index === position ? "true" : undefined} onClick={() => setIndex(position)}><span /></button>)}</div>
     </>}

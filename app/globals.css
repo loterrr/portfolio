@@ -179,6 +179,8 @@ button:disabled { cursor: not-allowed; }
 .reel-preview { grid-column: 1 / -1; grid-row: 1; position: relative; overflow: hidden; display: grid; place-items: center; border: 1px solid #45454e; border-radius: 13px; background: #28292f; }
 .reel-preview img, .reel-preview video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
 .reel-preview[aria-roledescription="carousel"] { touch-action: pan-y pinch-zoom; }
+.preview-expand { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; color: white; }
+.preview-expand svg { filter: drop-shadow(0 1px 2px #000a); }
 .preview-dots { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); display: flex; padding: 0 4px; }
 .preview-dot { display: grid; place-items: center; width: 28px; height: 32px; padding: 0; border: 0; background: transparent; cursor: pointer; }
 .preview-dot span { width: 6px; height: 6px; border-radius: 50%; background: #ffffff70; box-shadow: 0 1px 2px #000a; }
