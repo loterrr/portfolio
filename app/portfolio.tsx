@@ -22,6 +22,7 @@ import { repositoryAvailable, validExternalUrl, validMediaUrl } from "@/lib/urls
 import Modal from "./modal";
 import TechStack from "./tech-stack";
 import ProjectDetails from "./project-details";
+import ProjectPreview from "./project-preview";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
 import ProfileCover from "./profile-cover";
@@ -280,10 +281,10 @@ export function Reels({
           return (
             <article className="reel" data-slug={project.slug} key={project.id} inert={project.id !== selected.id}>
               <div className="reel-content">
-                <div className="reel-preview">
-                  {hasVideo ? <video src={project.demo_video_url ?? undefined} muted loop playsInline poster={project.thumbnail_url ?? undefined} /> : project.thumbnail_url ? <img src={project.thumbnail_url} alt={`${project.title} project preview`} /> : <div className="reel-preview-empty"><Code2 size={34} /><span>Project preview</span></div>}
-                  {hasVideo && <button className="video-toggle" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play project video" : "Pause project video"}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>}
-                </div>
+                {hasVideo ? <div className="reel-preview">
+                  <video src={project.demo_video_url ?? undefined} muted loop playsInline poster={project.thumbnail_url ?? undefined} />
+                  <button className="video-toggle" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play project video" : "Pause project video"}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>
+                </div> : <ProjectPreview project={project} active={project.id === selected.id && !commentsOpen && !detailsOpen} />}
                 <div className="reel-copy"><span className="reel-handle">{profile.handle}</span><h1>{project.title}</h1><p className="reel-summary">{project.summary}</p><div className="tag-list">{project.tech_stack.slice(0, 6).map((tag) => <span className="tag" key={tag}><BrandLogo name={tag} size={13} />{tag}</span>)}{project.tech_stack.length > 6 && <button className="tag" onClick={() => setDetailsOpen(true)} aria-label={`View all ${project.tech_stack.length} technologies`}>+{project.tech_stack.length - 6} more</button>}</div><p className="reel-description">{[project.category, project.project_type, project.role, project.development_status].filter(Boolean).join(" · ")}</p><button className="text-link" onClick={() => setDetailsOpen(true)}>View Full Case Study <ArrowRight size={16} /></button></div>
               </div>
               <div className="interaction-rail" aria-label="Project actions">
