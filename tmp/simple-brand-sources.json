@@ -1,0 +1,31 @@
+[
+  {
+    "Name": "radixui",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/radixui.svg"
+  },
+  {
+    "Name": "zod",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/zod.svg"
+  },
+  {
+    "Name": "pino",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/pino.svg"
+  },
+  {
+    "Name": "testinglibrary",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/testinglibrary.svg"
+  },
+  {
+    "Name": "lucide",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/lucide.svg"
+  },
+  {
+    "Name": "webrtc",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/webrtc.svg"
+  },
+  {
+    "Name": "jsonwebtokens",
+    "Url": "https://raw.githubusercontent.com/simple-icons/simple-icons/4d29a35c954699b389a834aacc97dd6e7e74143c/icons/jsonwebtokens.svg"
+  },
+  "Unavailable: openai"
+]

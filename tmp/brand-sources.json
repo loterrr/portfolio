@@ -1,0 +1,158 @@
+[
+  {
+    "Name": "github",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/github/github-original.svg"
+  },
+  {
+    "Name": "linkedin",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/linkedin/linkedin-original.svg"
+  },
+  {
+    "Name": "react",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/react/react-original.svg"
+  },
+  {
+    "Name": "nextjs",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/nextjs/nextjs-original.svg"
+  },
+  {
+    "Name": "typescript",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/typescript/typescript-original.svg"
+  },
+  {
+    "Name": "javascript",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/javascript/javascript-original.svg"
+  },
+  {
+    "Name": "html5",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/html5/html5-original.svg"
+  },
+  {
+    "Name": "css3",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/css3/css3-original.svg"
+  },
+  {
+    "Name": "tailwindcss",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/tailwindcss/tailwindcss-original.svg"
+  },
+  {
+    "Name": "bootstrap",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/bootstrap/bootstrap-original.svg"
+  },
+  {
+    "Name": "jquery",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/jquery/jquery-original.svg"
+  },
+  {
+    "Name": "zustand",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/zustand/zustand-original.svg"
+  },
+  {
+    "Name": "postcss",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/postcss/postcss-original.svg"
+  },
+  {
+    "Name": "framermotion",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/framermotion/framermotion-original.svg"
+  },
+  {
+    "Name": "nodejs",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/nodejs/nodejs-original.svg"
+  },
+  {
+    "Name": "fastify",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/fastify/fastify-original.svg"
+  },
+  {
+    "Name": "fastapi",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/fastapi/fastapi-original.svg"
+  },
+  {
+    "Name": "express",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/express/express-original.svg"
+  },
+  {
+    "Name": "php",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/php/php-original.svg"
+  },
+  {
+    "Name": "python",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/python/python-original.svg"
+  },
+  {
+    "Name": "prisma",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/prisma/prisma-original.svg"
+  },
+  {
+    "Name": "supabase",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/supabase/supabase-original.svg"
+  },
+  {
+    "Name": "mysql",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/mysql/mysql-original.svg"
+  },
+  {
+    "Name": "postgresql",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/postgresql/postgresql-original.svg"
+  },
+  {
+    "Name": "sqlite",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/sqlite/sqlite-original.svg"
+  },
+  {
+    "Name": "redis",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/redis/redis-original.svg"
+  },
+  {
+    "Name": "docker",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/docker/docker-original.svg"
+  },
+  {
+    "Name": "kubernetes",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/kubernetes/kubernetes-original.svg"
+  },
+  {
+    "Name": "githubactions",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/githubactions/githubactions-original.svg"
+  },
+  {
+    "Name": "apache",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/apache/apache-original.svg"
+  },
+  {
+    "Name": "nginx",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/nginx/nginx-original.svg"
+  },
+  {
+    "Name": "vercel",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/vercel/vercel-original.svg"
+  },
+  {
+    "Name": "railway",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/railway/railway-original.svg"
+  },
+  {
+    "Name": "git",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/git/git-original.svg"
+  },
+  {
+    "Name": "composer",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/composer/composer-original.svg"
+  },
+  {
+    "Name": "vite",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/vite/vite-original.svg"
+  },
+  {
+    "Name": "vitest",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/vitest/vitest-original.svg"
+  },
+  {
+    "Name": "npm",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/npm/npm-original.svg"
+  },
+  {
+    "Name": "eslint",
+    "Url": "https://raw.githubusercontent.com/devicons/devicon/6a37858047b0e8d9c9c0e68f4a071fc410652e89/icons/eslint/eslint-original.svg"
+  }
+]
