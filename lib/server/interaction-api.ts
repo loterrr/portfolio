@@ -1,10 +1,22 @@
 import { ApiError } from "./api-error.ts";
-import type { openDatabase } from "./database.ts";
+import type { CommentPage, ProjectInteraction } from "../interaction-types.ts";
+
+export type InteractionDatabase = {
+  close?: () => void;
+  hasVisitor: (id: string) => boolean | Promise<boolean>;
+  createVisitor: () => string | Promise<string>;
+  listInteractions: (visitorId: string) => ProjectInteraction[] | Promise<ProjectInteraction[]>;
+  setLike: (projectId: string, visitorId: string, liked: boolean) => ProjectInteraction[] | Promise<ProjectInteraction[]>;
+  listComments: (projectId: string, cursor?: string | null) => CommentPage | Promise<CommentPage>;
+  addComment: (projectId: string, visitorId: string, name: string, body: string) => void | Promise<void>;
+  listModeration: (status: "pending" | "approved", cursor?: string | null) => CommentPage | Promise<CommentPage>;
+  moderateComment: (id: string, status: "approved" | "deleted") => void | Promise<void>;
+};
 
 const cookieName = "scrollfolio_visitor";
 type Handler = (request: Request) => Promise<Response> | Response;
 
-export function createInteractionApi(database: () => ReturnType<typeof openDatabase>, environment: string | undefined = process.env.NODE_ENV) {
+export function createInteractionApi(database: () => InteractionDatabase | Promise<InteractionDatabase>, environment: string | undefined = process.env.NODE_ENV) {
   function endpoint(handler: Handler): Handler {
     return async (request) => {
       try { return await handler(request); }
@@ -85,45 +97,50 @@ export function createInteractionApi(database: () => ReturnType<typeof openDatab
   }
 
   return {
-    getInteractions: endpoint((request) => {
-      const db = database();
+    getInteractions: endpoint(async (request) => {
+      const db = await database();
       let id = visitor(request);
       let headers;
-      if (!id || !db.hasVisitor(id)) {
-        id = db.createVisitor();
+      if (!id || !(await db.hasVisitor(id))) {
+        id = await db.createVisitor();
         const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
         headers = { "Set-Cookie": `${cookieName}=${id}; HttpOnly; SameSite=Strict; Path=/; Max-Age=31536000${secure}` };
       }
-      return json({ interactions: db.listInteractions(id) }, 200, headers);
+      return json({ interactions: await db.listInteractions(id) }, 200, headers);
     }),
     like: endpoint(async (request) => {
       const input = await body(request);
       const projectId = text(input.projectId, "project ID", 100);
       if (typeof input.liked !== "boolean") throw new ApiError(400, "Invalid like state.");
-      return json({ interactions: database().setLike(projectId, visitor(request), input.liked) });
+      const db = await database();
+      return json({ interactions: await db.setLike(projectId, visitor(request), input.liked) });
     }),
-    getComments: endpoint((request) => {
+    getComments: endpoint(async (request) => {
       const params = new URL(request.url).searchParams;
-      return json(database().listComments(text(params.get("projectId"), "project ID", 100), params.get("before")));
+      const db = await database();
+      return json(await db.listComments(text(params.get("projectId"), "project ID", 100), params.get("before")));
     }),
     comment: endpoint(async (request) => {
       const input = await body(request);
       if (input.website !== undefined && input.website !== "") throw new ApiError(400, "Could not submit this comment.");
-      database().addComment(text(input.projectId, "project ID", 100), visitor(request), text(input.name, "display name", 40), text(input.body, "comment", 1000));
+      const db = await database();
+      await db.addComment(text(input.projectId, "project ID", 100), visitor(request), text(input.name, "display name", 40), text(input.body, "comment", 1000));
       return json({ message: "Submitted for owner review." }, 201);
     }),
-    getModeration: endpoint((request) => {
+    getModeration: endpoint(async (request) => {
       requireLocalOwner(request);
       const params = new URL(request.url).searchParams;
       const status = params.get("status") ?? "pending";
       if (status !== "pending" && status !== "approved") throw new ApiError(400, "Invalid comment status.");
-      return json(database().listModeration(status, params.get("before")));
+      const db = await database();
+      return json(await db.listModeration(status, params.get("before")));
     }),
     moderate: endpoint(async (request) => {
       requireLocalOwner(request);
       const input = await body(request);
       if (input.status !== "approved" && input.status !== "deleted") throw new ApiError(400, "Invalid moderation action.");
-      database().moderateComment(text(input.id, "comment ID", 15), input.status);
+      const db = await database();
+      await db.moderateComment(text(input.id, "comment ID", 15), input.status);
       return json({ saved: true });
     }),
   };
