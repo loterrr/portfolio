@@ -56,6 +56,7 @@
 - Migrated database schema and seeded projects to Supabase project (`cnnvldjcirjbcxiklmju`). Added Supabase serverless adapter with automatic fallback to local SQLite for local dev/testing. Initialized Git, set remote to https://github.com/loterrr/portfolio.git, and staged branch main. Pushed commits to GitHub origin main upon user authorization. TypeScript and all 30 tests passed.
 - Streamlined `tech_stack` across all 10 projects in `lib/portfolio.ts` to keep only primary core technologies, pruning package-level dependencies, utilities, and build tools. TypeScript and all 30 tests passed.
 - Optimized Project Reels transition: turned project cards into prefetching `<Link>` elements, added route prefetching in the portfolio profile, bypassed the `/projects` server-redirect hop on tab and technology selection, and added a smooth 0.18s ease-out entrance transition to the reels shell. TypeScript and all 30 tests passed.
+- Generated dynamic vector personal cover banner (`app/profile-cover.tsx`) with deep dark grid, subtle ambient silver glow, floating particles, framing brackets, and bold minimal "LOTER" wordmark, replacing the placeholder banner. TypeScript and all 30 tests passed.
 
 
 

@@ -24,6 +24,7 @@ import TechStack from "./tech-stack";
 import ProjectDetails from "./project-details";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
+import ProfileCover from "./profile-cover";
 import { AboutSection, ExperienceSection } from "./portfolio-sections";
 
 type Tab = "Projects" | "Tech Stack" | "Experience" | "About";
@@ -386,7 +387,7 @@ export default function Portfolio() {
           <div className="top-actions"><button className="icon-button" onClick={() => setShowSearch((value) => !value)} aria-label="Toggle project search"><Search size={18} /></button>{process.env.NODE_ENV !== "production" && <a className="icon-button" href="/admin" aria-label="Open local comment moderation"><BriefcaseBusiness size={17} /></a>}</div>
         </header>
 
-        <section className="profile-cover" aria-label="Optional profile cover"><ImageIcon size={17} /><span>Optional personal banner / cover</span></section>
+        <ProfileCover />
 
         <section className="profile-intro">
           <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} /></div>
