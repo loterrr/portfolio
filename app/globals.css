@@ -108,7 +108,7 @@ button:disabled { cursor: not-allowed; }
 .project-card:hover .card-open { opacity: 1; transform: translateY(0); }
 .card-copy { padding: 11px 11px 12px; }
 .card-category { color: var(--accent); font-size: 10px; }
-.card-copy h3 { margin: 4px 0 4px; font-size: 14px; font-weight: 650; letter-spacing: -.03em; }
+.card-copy h3 { margin: 4px 0 4px; font-size: 14px; font-weight: 650; letter-spacing: -.03em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-copy p { display: -webkit-box; overflow: hidden; min-height: 38px; margin: 0; color: var(--muted); font-size: 11px; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
 .card-foot { display: flex; gap: 9px; margin-top: 10px; color: var(--quiet); font-size: 10px; }
 .card-foot span { display: inline-flex; align-items: center; gap: 5px; }
@@ -186,7 +186,7 @@ button:disabled { cursor: not-allowed; }
 .reel-copy { grid-column: 1; grid-row: 2; min-height: 0; max-height: 100%; overflow-y: auto; scrollbar-width: none; align-self: center; padding: 10px 0 4px; }
 .reel-copy::-webkit-scrollbar { display: none; }
 .reel-category { color: var(--accent); font-size: 11px; }
-.reel-copy h1 { margin: 4px 0 6px; font-size: 26px; letter-spacing: -.055em; }
+.reel-copy h1 { margin: 4px 0 6px; font-size: clamp(19px, 5.2vw, 24px); letter-spacing: -.055em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .reel-summary { margin: 0; color: #d0cfd7; font-size: 13px; }
 .reel-description { max-width: 690px; color: var(--muted); font-size: 11px; }
 .text-link { display: inline-flex; align-items: center; gap: 7px; margin-top: 13px; padding: 0; border: 0; color: #ddd; background: transparent; font-size: 12px; cursor: pointer; }

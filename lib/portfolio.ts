@@ -268,7 +268,7 @@ export const projects: Project[] = [{
 }, {
   id: "isu-registrar",
   slug: "isu-registrar",
-  title: "Registrar & Academic Scheduling Portal",
+  title: "Registrar Portal",
   summary: "Manage classrooms, faculty assignments, curricula, and academic timetables.",
   description: "A web-based academic management and scheduling portal that automates classroom reservations, faculty assignments, curriculum tracking, and schedule generation, with conflict detection across faculty, rooms, and sections.",
   category: "Web",

@@ -58,6 +58,7 @@
 - Optimized Project Reels transition: turned project cards into prefetching `<Link>` elements, added route prefetching in the portfolio profile, bypassed the `/projects` server-redirect hop on tab and technology selection, and added a smooth 0.18s ease-out entrance transition to the reels shell. TypeScript and all 30 tests passed.
 - Generated dynamic vector personal cover banner (`app/profile-cover.tsx`) with deep dark grid, subtle ambient silver glow, floating particles, framing brackets, and bold minimal "LOTER" wordmark, replacing the placeholder banner. TypeScript and all 30 tests passed.
 - Added custom 2D LOTER browser favicon (`app/icon.svg` & `public/favicon.svg`) featuring dark squircle badge with code brackets and sharp monogram "L", replacing default generic document tab icon. TypeScript and all 30 tests passed.
+- Shortened Registrar project title to "Registrar Portal" in `lib/portfolio.ts` and enforced single-line display (`white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: clamp(...)`) across all project cards and reels headers. TypeScript and all 30 tests passed.
 
 
 
