@@ -4,7 +4,7 @@ import { useEffect, useRef, type ReactNode } from "react";
 
 export default function Modal({ children, kind, labelId, onClose }: {
   children: ReactNode;
-  kind: "comments" | "details";
+  kind: "comments" | "details" | "image";
   labelId: string;
   onClose: () => void;
 }) {
@@ -23,5 +23,5 @@ export default function Modal({ children, kind, labelId, onClose }: {
     };
   }, []);
 
-  return <dialog ref={ref} className={`modal modal-${kind}`} aria-labelledby={labelId} onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>{children}</dialog>;
+  return <dialog ref={ref} className={`modal modal-${kind}`} aria-labelledby={labelId} onKeyDown={(event) => { if (kind === "image") event.stopPropagation(); }} onCancel={(event) => { event.preventDefault(); event.stopPropagation(); onClose(); }} onClick={(event) => { if (event.target === event.currentTarget) onClose(); }}>{children}</dialog>;
 }
