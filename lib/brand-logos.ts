@@ -15,7 +15,7 @@ export const brandLogos: Record<string, string> = {
   railway: "railway", git: "git", composer: "composer", vite: "vite", vitest: "vitest",
   "react testing library": "testinglibrary", "npm workspaces": "npm", eslint: "eslint",
   flutter: "flutter", dart: "dart", leaflet: "leaflet", "better auth": "betterauth",
-  "tensorflow.js": "tensorflow", "mapbox gl js": "mapbox",
+  "tensorflow.js": "tensorflow", "mapbox gl js": "mapbox", render: "render",
 };
 
 export function brandLogo(name: string) {
@@ -24,5 +24,5 @@ export function brandLogo(name: string) {
 
 export const monochromeLogos = new Set([
   "github", "fastify", "express", "prisma", "vercel", "framermotion",
-  "radixui", "zod", "pino", "testinglibrary", "lucide", "webrtc", "openai", "leaflet", "betterauth", "mapbox",
+  "radixui", "zod", "pino", "testinglibrary", "lucide", "webrtc", "openai", "leaflet", "betterauth", "mapbox", "render",
 ]);
