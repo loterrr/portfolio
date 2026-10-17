@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Code2, ImageIcon, Maximize2 } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Project } from "@/lib/portfolio";
 import { validMediaUrl } from "@/lib/urls";
 import ImagePreview from "./image-preview";
@@ -12,6 +13,8 @@ export default function ProjectPreview({ project, active }: { project: Project; 
     images.unshift({ url: project.thumbnail_url!, alt: `${project.title} project preview` });
   }
   const [index, setIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
+  const reduceMotion = useReducedMotion();
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const [held, setHeld] = useState(false);
@@ -23,12 +26,16 @@ export default function ProjectPreview({ project, active }: { project: Project; 
   useEffect(() => {
     if (!active || expanded || hovered || focused || held || images.length < 2) return;
     const timer = window.setInterval(() => {
-      if (!document.hidden) setIndex((current) => (current + 1) % images.length);
+      if (!document.hidden) {
+        setDirection(1);
+        setIndex((current) => (current + 1) % images.length);
+      }
     }, 3000);
     return () => window.clearInterval(timer);
   }, [active, expanded, hovered, focused, held, images.length, index]);
 
   function move(direction: number) {
+    setDirection(direction);
     setIndex((current) => (current + direction + images.length) % images.length);
   }
 
@@ -74,11 +81,17 @@ export default function ProjectPreview({ project, active }: { project: Project; 
     onFocusCapture={(event) => setFocused(event.target.matches(":focus-visible"))} onBlurCapture={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}>
     {image ? failedUrl === image.url
       ? <div className="reel-preview-empty"><ImageIcon size={34} /><span>Image unavailable</span></div>
-      : <img className="preview-image" src={image.url} alt={image.alt} draggable={false} onError={() => setFailedUrl(image.url)} />
+      : <AnimatePresence initial={false} custom={direction}>
+        <motion.img key={image.url} className="preview-image" src={image.url} alt={image.alt} draggable={false} onError={() => setFailedUrl(image.url)}
+          custom={direction}
+          variants={{ enter: (step: number) => ({ x: step > 0 ? "100%" : "-100%" }), visible: { x: "0%" }, exit: (step: number) => ({ x: step > 0 ? "-100%" : "100%" }) }}
+          initial={reduceMotion ? false : "enter"} animate="visible" exit={reduceMotion ? { x: "0%" } : "exit"}
+          transition={{ duration: reduceMotion ? 0 : 0.3, ease: "easeOut" }} />
+      </AnimatePresence>
       : <div className="reel-preview-empty"><Code2 size={34} /><span>Project preview</span></div>}
     {image && failedUrl !== image.url && <button type="button" className="icon-button preview-expand" aria-label="Expand image preview" title="View full image" onClick={() => setExpanded(true)}><Maximize2 size={18} /></button>}
     {images.length > 1 && <>
-      <div className="preview-dots" role="group" aria-label="Choose preview">{images.map((item, position) => <button type="button" key={item.url} className="preview-dot" aria-label={`Show preview ${position + 1} of ${images.length}`} aria-current={index === position ? "true" : undefined} onClick={() => setIndex(position)}><span /></button>)}</div>
+      <div className="preview-dots" role="group" aria-label="Choose preview">{images.map((item, position) => <button type="button" key={item.url} className="preview-dot" aria-label={`Show preview ${position + 1} of ${images.length}`} aria-current={index === position ? "true" : undefined} onClick={() => { setDirection(position > index ? 1 : -1); setIndex(position); }}><span /></button>)}</div>
     </>}
   </div>{expanded && image && <ImagePreview image={image} onClose={() => setExpanded(false)} />}</>;
 }
