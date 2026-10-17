@@ -179,7 +179,8 @@ button:disabled { cursor: not-allowed; }
 .reel-preview-empty { display: grid; justify-items: center; gap: 8px; color: #898894; }
 .reel-preview-empty span { font-size: 11px; }
 .video-toggle { position: absolute; right: 12px; bottom: 12px; width: 38px; height: 38px; display: grid; place-items: center; border: 0; border-radius: 50%; color: white; background: rgba(0,0,0,.56); cursor: pointer; }
-.reel-copy { grid-column: 1; grid-row: 2; min-height: 0; max-height: 100%; overflow-y: auto; align-self: center; padding: 10px 0 4px; }
+.reel-copy { grid-column: 1; grid-row: 2; min-height: 0; max-height: 100%; overflow-y: auto; scrollbar-width: none; align-self: center; padding: 10px 0 4px; }
+.reel-copy::-webkit-scrollbar { display: none; }
 .reel-category { color: var(--accent); font-size: 11px; }
 .reel-copy h1 { margin: 4px 0 6px; font-size: 26px; letter-spacing: -.055em; }
 .reel-summary { margin: 0; color: #d0cfd7; font-size: 13px; }
