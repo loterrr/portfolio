@@ -50,6 +50,36 @@ export const profile = {
 };
 
 export const projects: Project[] = [{
+  id: "tara-ba",
+  slug: "tara-ba",
+  title: "Tara?",
+  summary: "Turn barkada ideas into confirmed meetups.",
+  description: "A group planning web app that helps friends turn hangout ideas into confirmed meetups. Create a plan, share the link, and decide together on dates that work for everyone.",
+  category: "Web",
+  tags: ["Group planning", "Meetups", "Scheduling"],
+  tech_stack: ["Vercel"],
+  thumbnail_url: "/media/projects/tara-ba/tara-hero.png",
+  demo_video_url: null,
+  live_url: "https://tara-ba.vercel.app",
+  repository_url: null,
+  status: "published",
+  project_type: "Group planning application",
+  featured: true,
+  published_at: null,
+  like_count: 0,
+  comment_count: 0,
+  details: {
+    problem: "Coordinating a hangout across a group can leave ideas stuck in chat without an agreed date.",
+    solution: "Give friends a shared plan link where they can propose dates and decide together.",
+    features: ["Create a hangout plan", "Share a plan through a link", "Propose dates and let everyone say what works"],
+    challenges: "",
+    gallery: [
+      { url: "/media/projects/tara-ba/tara-hero.png", alt: "Tara landing page with pink branding and a create a plan button", caption: "A shared starting point for planning the next barkada meetup." },
+      { url: "/media/projects/tara-ba/tara-create-plan.png", alt: "Tara create-plan form with plan name, organizer name, and short note fields", caption: "Create a plan with the basics before choosing dates and places." },
+      { url: "/media/projects/tara-ba/tara-confirmed.png", alt: "Tara invitation demo showing a confirmed coffee meetup with its date and place", caption: "Public invitation demo showing the confirmed plan guests can respond to." },
+    ],
+  },
+}, {
   id: "peer-drop",
   slug: "peer-drop",
   title: "Peer Drop",
