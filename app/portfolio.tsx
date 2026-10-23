@@ -7,7 +7,7 @@ import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/
 import {
   ArrowLeft, ArrowRight, ArrowUp, BriefcaseBusiness, Check,
   Layers, Code2, Globe2, Heart, ImageIcon,
-  Mail, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
+  GitBranch, Mail, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
   X,
 } from "lucide-react";
 import {
@@ -26,11 +26,12 @@ import ProjectPreview from "./project-preview";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
 import ProfileCover from "./profile-cover";
+import GithubSection from "./github-section";
 import { AboutSection, ExperienceSection } from "./portfolio-sections";
 
-type Tab = "Projects" | "Tech Stack" | "Experience" | "About";
-const tabs: Tab[] = ["Projects", "Tech Stack", "Experience", "About"];
-const tabIcons = { Projects: Code2, "Tech Stack": Layers, Experience: BriefcaseBusiness, About: UserRound };
+type Tab = "Projects" | "Tech Stack" | "Experience" | "About" | "GitHub";
+const tabs: Tab[] = ["Projects", "Tech Stack", "Experience", "About", "GitHub"];
+const tabIcons = { Projects: Code2, "Tech Stack": Layers, Experience: BriefcaseBusiness, About: UserRound, GitHub: GitBranch };
 
 function formatCount(count: number) {
   return new Intl.NumberFormat().format(count);
@@ -424,6 +425,7 @@ export default function Portfolio() {
             {tab === "Tech Stack" && <TechStack groups={technologyGroups} onSelect={selectTechnology} />}
             {tab === "Experience" && <ExperienceSection />}
             {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
+            {tab === "GitHub" && <GithubSection />}
           </motion.section>
         </AnimatePresence>
 
