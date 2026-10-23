@@ -18,7 +18,7 @@ function Gallery({ images }: { images: NonNullable<Project["details"]["gallery"]
 
   return <section className="case-gallery" aria-label="Project media gallery">
     <h3>Gallery</h3>
-    <figure>{failed ? <div className="gallery-unavailable"><ImageIcon size={24} /><p>Image unavailable</p></div> : <button type="button" className="gallery-image-button" onClick={() => setExpanded(true)} aria-label={`Open full-size image: ${image.alt}`}><img key={image.url} src={image.url} alt={image.alt} loading="lazy" onError={() => setFailed(true)} /></button>}{image.caption && <figcaption>{image.caption}</figcaption>}</figure>
+    <figure>{failed ? <div className="gallery-unavailable"><ImageIcon size={24} /><p>Image unavailable</p></div> : <button type="button" className="gallery-image-button" onClick={() => setExpanded(true)} aria-label={`Open full-size image: ${image.alt}`}><img key={image.url} src={image.url} alt={image.alt} loading="lazy" decoding="async" onError={() => setFailed(true)} /></button>}{image.caption && <figcaption>{image.caption}</figcaption>}</figure>
     {images.length > 1 && <div className="gallery-navigation"><button className="icon-button" disabled={index === 0} onClick={() => select(index - 1)} aria-label="Previous screenshot"><ArrowLeft size={18} /></button><span aria-live="polite">{index + 1} / {images.length}</span><button className="icon-button" disabled={index === images.length - 1} onClick={() => select(index + 1)} aria-label="Next screenshot"><ArrowRight size={18} /></button></div>}
     {expanded && <ImagePreview image={image} onClose={() => setExpanded(false)} />}
   </section>;

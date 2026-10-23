@@ -10,7 +10,7 @@ export default function ImagePreview({ image, onClose }: { image: { url: string;
     <button type="button" className="icon-button image-viewer-close" onClick={onClose} aria-label="Close image preview"><X size={22} /></button>
     <figure className="image-viewer">
       <span id={labelId} className="sr-only">{image.alt}</span>
-      <img src={image.url} alt={image.alt} />
+      <img src={image.url} alt={image.alt} decoding="async" />
       {image.caption && <figcaption>{image.caption}</figcaption>}
     </figure>
   </Modal>;

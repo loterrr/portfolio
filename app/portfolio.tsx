@@ -52,7 +52,7 @@ function ProjectCard({ project, interaction, href }: { project: Project; interac
     <Link href={href} prefetch={true} className="project-card-link">
       <motion.div className="project-card" whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
         <div className="project-cover">
-          {project.thumbnail_url && <img src={project.thumbnail_url} alt={`${project.title} preview`} />}
+          {project.thumbnail_url && <img src={project.thumbnail_url} alt={`${project.title} preview`} loading="lazy" decoding="async" />}
           {!project.thumbnail_url && <div className="cover-placeholder"><Code2 size={24} /><span>Project preview</span></div>}
           {project.featured && <span className="featured-label">Featured</span>}
           <span className="card-open"><ArrowRight size={17} /></span>
@@ -249,6 +249,11 @@ export function Reels({
   }, [paused, filtered, selected.slug]);
 
   useEffect(() => {
+    document.body.classList.add("reels-open");
+    return () => document.body.classList.remove("reels-open");
+  }, []);
+
+  useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (commentsOpen || detailsOpen) { if (event.key === "Escape") { setCommentsOpen(false); setDetailsOpen(false); } return; }
       if (event.key === "Escape") onExit();
@@ -279,13 +284,14 @@ export function Reels({
           const validLive = validExternalUrl(project.live_url);
           const validRepo = repositoryAvailable(project);
           const hasVideo = validMediaUrl(project.demo_video_url);
+          const previewMounted = Math.abs(index - activeIndex) <= 1;
           return (
             <article className="reel" data-slug={project.slug} key={project.id} inert={project.id !== selected.id}>
               <div className="reel-content">
                 {hasVideo ? <div className="reel-preview">
                   <video src={project.demo_video_url ?? undefined} muted loop playsInline poster={project.thumbnail_url ?? undefined} />
                   <button className="video-toggle" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play project video" : "Pause project video"}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>
-                </div> : <ProjectPreview project={project} active={project.id === selected.id && !commentsOpen && !detailsOpen} />}
+                </div> : previewMounted ? <ProjectPreview project={project} active={project.id === selected.id && !commentsOpen && !detailsOpen} /> : <div className="reel-preview reel-preview-empty" aria-hidden="true" />}
                 <div className="reel-copy"><span className="reel-handle">{profile.handle}</span><h1>{project.title}</h1><p className="reel-summary">{project.summary}</p><div className="tag-list">{project.tech_stack.slice(0, 6).map((tag) => <span className="tag" key={tag}><BrandLogo name={tag} size={13} />{tag}</span>)}{project.tech_stack.length > 6 && <button className="tag" onClick={() => setDetailsOpen(true)} aria-label={`View all ${project.tech_stack.length} technologies`}>+{project.tech_stack.length - 6} more</button>}</div><p className="reel-description">{[project.category, project.project_type, project.role, project.development_status].filter(Boolean).join(" · ")}</p><button className="text-link" onClick={() => setDetailsOpen(true)}>View Full Case Study <ArrowRight size={16} /></button></div>
               </div>
               <div className="interaction-rail" aria-label="Project actions">
@@ -392,7 +398,7 @@ export default function Portfolio() {
         <ProfileCover />
 
         <section className="profile-intro">
-          <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} /></div>
+          <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} decoding="async" /></div>
           <div className="profile-copy"><h1>{profile.name}</h1><p className="handle">{profile.handle}</p><p className="role">{profile.role}</p><span className={`availability ${profile.available === true ? "available" : ""}`}><span />{profile.available === null ? "Availability not set" : profile.available ? "Open to opportunities" : "Currently focused"}</span></div>
         </section>
 

@@ -211,7 +211,9 @@ button:disabled { cursor: not-allowed; }
 .page-footer { display: flex; justify-content: space-between; gap: 16px; padding: 16px 2px 0; border-top: 1px solid var(--line); color: var(--quiet); font-size: 9px; }
 .page-footer a:hover { color: var(--accent); }
 
-.reels-shell { position: fixed; inset: 14px auto; left: 0; right: 0; width: min(440px, calc(100% - 16px)); height: calc(100dvh - 28px); margin: 0 auto; z-index: 5; display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; border: 1px solid #282828; background: #101114; box-shadow: 0 0 0 100vmax rgba(0,0,0,.9); }
+body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; background: rgba(0,0,0,.9); pointer-events: none; animation: reels-scrim-in .18s ease-out; }
+@keyframes reels-scrim-in { from { opacity: 0; } }
+.reels-shell { position: fixed; inset: 14px auto; left: 0; right: 0; width: min(440px, calc(100% - 16px)); height: calc(100dvh - 28px); margin: 0 auto; z-index: 5; display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; border: 1px solid #282828; background: #101114; }
 .reels-top { z-index: 2; flex: 0 0 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 17px; background: #101114; }
 .back-link { display: inline-flex; align-items: center; gap: 10px; border: 0; padding: 8px 0; color: #ecebf0; background: transparent; font-weight: 620; cursor: pointer; }
 .back-link:hover { color: var(--accent); }
@@ -219,7 +221,7 @@ button:disabled { cursor: not-allowed; }
 .reel-count i { padding: 0 5px; color: #65646e; font-style: normal; }
 .reels-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scroll-snap-type: y mandatory; scrollbar-width: none; background: #101114; }
 .reels-scroll::-webkit-scrollbar { display: none; }
-.reel { position: relative; min-height: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 58px; grid-template-rows: minmax(260px, 56%) minmax(0, 1fr) 46px; gap: 0 6px; padding: 0 12px max(8px, env(safe-area-inset-bottom)); scroll-snap-align: start; scroll-snap-stop: always; }
+.reel { content-visibility: auto; position: relative; min-height: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 58px; grid-template-rows: minmax(260px, 56%) minmax(0, 1fr) 46px; gap: 0 6px; padding: 0 12px max(8px, env(safe-area-inset-bottom)); scroll-snap-align: start; scroll-snap-stop: always; }
 .reel-content { display: contents; }
 .reel-preview { grid-column: 1 / -1; grid-row: 1; position: relative; overflow: hidden; display: grid; place-items: center; border: 1px solid #45454e; border-radius: 13px; background: #28292f; }
 .reel-preview img, .reel-preview video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }

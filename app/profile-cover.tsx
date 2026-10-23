@@ -14,6 +14,7 @@ export default function ProfileCover() {
         width={1200}
         height={320}
         loading="eager"
+        decoding="async"
       />
     </div>
   );

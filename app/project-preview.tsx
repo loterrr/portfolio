@@ -84,7 +84,7 @@ export default function ProjectPreview({ project, active }: { project: Project; 
     {image ? failedUrl === image.url
       ? <div className="reel-preview-empty"><ImageIcon size={34} /><span>Image unavailable</span></div>
       : <AnimatePresence initial={false} custom={direction}>
-        <motion.img key={image.url} className="preview-image" src={image.url} alt={image.alt} draggable={false} onError={() => setFailedUrl(image.url)}
+        <motion.img key={image.url} className="preview-image" src={image.url} alt={image.alt} draggable={false} loading={active ? "eager" : "lazy"} decoding="async" onError={() => setFailedUrl(image.url)}
           custom={direction}
           variants={{ enter: (step: number) => ({ x: step > 0 ? "100%" : "-100%" }), visible: { x: "0%" }, exit: (step: number) => ({ x: step > 0 ? "-100%" : "100%" }) }}
           initial={reduceMotion ? false : "enter"} animate="visible" exit={reduceMotion ? { x: "0%" } : "exit"}
