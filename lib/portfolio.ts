@@ -57,7 +57,7 @@ export const projects: Project[] = [{
   description: "A group planning web app that helps friends turn hangout ideas into confirmed meetups. Create a plan, share the link, and decide together on dates that work for everyone.",
   category: "Web",
   tags: ["Group planning", "Meetups", "Scheduling"],
-  tech_stack: ["Vercel"],
+  tech_stack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Supabase", "Git"],
   thumbnail_url: "/media/projects/tara-ba/tara-hero.png",
   demo_video_url: null,
   live_url: "https://tara-ba.vercel.app",
