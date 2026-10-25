@@ -10,6 +10,8 @@ export const brandLogos: Record<string, string> = {
   "@fastify/websocket": "fastify", "@fastify/cors": "fastify", "@fastify/helmet": "fastify",
   "@fastify/rate-limit": "fastify", "@fastify/jwt": "fastify", zod: "zod", pino: "pino",
   mysql: "mysql", postgresql: "postgresql", pg: "postgresql", sqlite: "sqlite", redis: "redis", openai: "openai",
+  claude: "claude", opencode: "opencode", gemini: "googlegemini", "google gemini": "googlegemini",
+  deepseek: "deepseek", glm: "zai", "z.ai": "zai", zhipu: "zai", "zhipu ai": "zai", chatglm: "zai",
   docker: "docker", "docker compose": "docker", kubernetes: "kubernetes",
   "github actions": "githubactions", apache: "apache", nginx: "nginx", vercel: "vercel",
   railway: "railway", git: "git", composer: "composer", vite: "vite", vitest: "vitest",
@@ -24,5 +26,5 @@ export function brandLogo(name: string) {
 
 export const monochromeLogos = new Set([
   "github", "fastify", "express", "prisma", "vercel", "framermotion",
-  "radixui", "zod", "pino", "testinglibrary", "lucide", "webrtc", "openai", "leaflet", "betterauth", "mapbox", "render",
+  "radixui", "zod", "pino", "testinglibrary", "lucide", "webrtc", "openai", "opencode", "leaflet", "betterauth", "mapbox", "render",
 ]);

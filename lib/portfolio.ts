@@ -394,7 +394,7 @@ export const technologies: Record<string, string[]> = {
   Frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Flutter", "Dart", "Riverpod"],
   Backend: ["Node.js", "PHP", "Supabase", "Prisma"],
   Databases: ["PostgreSQL", "MySQL", "SQLite"],
-  "AI / Machine Learning": ["TensorFlow.js", "Google ML Kit"],
+  "AI / Machine Learning": ["TensorFlow.js", "Google ML Kit", "Claude", "OpenCode", "Gemini", "OpenAI", "DeepSeek", "GLM"],
   DevOps: ["Docker", "Vercel", "Render"],
   Tools: ["Git", "GitHub", "GitHub Actions", "Vite"],
 };

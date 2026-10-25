@@ -9,6 +9,12 @@ test("brand lookup uses exact brands and known product families", () => {
   assert.equal(brandLogo("Next.js"), "nextjs");
   assert.equal(brandLogo("Supabase Auth"), "supabase");
   assert.equal(brandLogo("@fastify/cors"), "fastify");
+  assert.equal(brandLogo("Claude"), "claude");
+  assert.equal(brandLogo("OpenCode"), "opencode");
+  assert.equal(brandLogo("Google Gemini"), "googlegemini");
+  assert.equal(brandLogo("DeepSeek"), "deepseek");
+  assert.equal(brandLogo("GLM"), "zai");
+  assert.equal(brandLogo("Zhipu AI"), "zai");
   assert.equal(brandLogo("RAG"), undefined);
   assert.equal(brandLogo("unknown"), undefined);
 });
