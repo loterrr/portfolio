@@ -50,6 +50,37 @@ export const profile = {
 };
 
 export const projects: Project[] = [{
+  id: "flower4you",
+  slug: "flower4you",
+  title: "flower4you",
+  summary: "Build a personal 3D bouquet, stem by stem.",
+  description: "An interactive bouquet builder for choosing flowers, wrapping, colors, and a personal message. Rotate and zoom the 3D bouquet, save it on your device, and preview the finished gift.",
+  category: "Web",
+  tags: ["3D", "Flowers", "Personalized gifts"],
+  tech_stack: ["React", "Three.js", "Vite", "Vercel"],
+  thumbnail_url: "/media/projects/flower4you/flower4you-hero.png",
+  demo_video_url: null,
+  live_url: "https://pot-vert.vercel.app",
+  repository_url: null,
+  status: "published",
+  project_type: "3D bouquet builder",
+  featured: false,
+  published_at: null,
+  like_count: 0,
+  comment_count: 0,
+  details: {
+    problem: "A digital flower gift needs room for personal choices, from the bouquet arrangement to the message that accompanies it.",
+    solution: "Bring flower selection, wrapping, and a personal card into a step-by-step builder with an interactive 3D preview.",
+    features: ["Occasion presets and Segment or Bow wrapping styles", "Bouquet sizes of 10, 16, or 20 stems", "Flower, foliage, paper, accent, and backdrop choices", "Rotate and zoom the 3D bouquet", "Save bouquets on the current device", "Personal message editor and gift preview"],
+    architecture: "React provides the builder interface and Three.js renders the interactive bouquet. Vite builds the app, and Vercel hosts the public site.",
+    challenges: "",
+    gallery: [
+      { url: "/media/projects/flower4you/flower4you-hero.png", alt: "flower4you wrap editor beside a 3D bouquet of white lilies and pink roses", caption: "Choose an occasion, wrapping style, bouquet size, and colors." },
+      { url: "/media/projects/flower4you/flower4you-message.png", alt: "flower4you message editor with optional music, voice note, and photo controls", caption: "Add a personal card and optional media to accompany the bouquet." },
+      { url: "/media/projects/flower4you/flower4you-preview.png", alt: "flower4you gift preview showing a birthday bouquet and a greeting card", caption: "Preview the finished bouquet and its personal message." },
+    ],
+  },
+}, {
   id: "tara-ba",
   slug: "tara-ba",
   title: "Tara?",
@@ -391,7 +422,7 @@ export const projects: Project[] = [{
 }];
 
 export const technologies: Record<string, string[]> = {
-  Frontend: ["React", "Next.js", "TypeScript", "Tailwind CSS", "Flutter", "Dart", "Riverpod"],
+  Frontend: ["React", "Next.js", "Three.js", "TypeScript", "Tailwind CSS", "Flutter", "Dart", "Riverpod"],
   Backend: ["Node.js", "PHP", "Supabase", "Prisma"],
   Databases: ["PostgreSQL", "MySQL", "SQLite"],
   "AI / Machine Learning": ["TensorFlow.js", "Google ML Kit", "Claude", "OpenCode", "Gemini", "OpenAI", "DeepSeek", "GLM"],
