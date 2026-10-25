@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } fro
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import {
-  ArrowLeft, ArrowRight, ArrowUp, BriefcaseBusiness, Check,
+  ArrowDown, ArrowLeft, ArrowRight, BriefcaseBusiness, Check, ChevronDown, ChevronUp,
   Layers, Code2, Globe2, Heart, ImageIcon,
   GitBranch, Mail, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
   X,
@@ -48,6 +48,8 @@ function EmptyState({ title, text }: { title: string; text: string }) {
 }
 
 function ProjectCard({ project, interaction, href }: { project: Project; interaction?: ProjectInteraction; href: string }) {
+  const likeCount = interaction?.like_count ?? 0;
+  const commentCount = interaction?.comment_count ?? 0;
   return (
     <Link href={href} prefetch={true} className="project-card-link">
       <motion.div className="project-card" whileHover={{ y: -4 }} whileTap={{ scale: 0.99 }}>
@@ -61,7 +63,10 @@ function ProjectCard({ project, interaction, href }: { project: Project; interac
           <span className="card-category">{project.category || "Project"}</span>
           <h3>{project.title}</h3>
           <p>{project.summary}</p>
-          <div className="card-foot"><span><Heart size={14} /> {interaction ? formatCount(interaction.like_count) : "—"}</span><span><MessageCircle size={14} /> {interaction ? formatCount(interaction.comment_count) : "—"}</span></div>
+          {(likeCount > 0 || commentCount > 0) && <div className="card-foot">
+            {likeCount > 0 && <span><Heart size={14} /> {formatCount(likeCount)}</span>}
+            {commentCount > 0 && <span><MessageCircle size={14} /> {formatCount(commentCount)}</span>}
+          </div>}
         </div>
         <span className="sr-only">Open {project.title} project reel</span>
       </motion.div>
@@ -122,7 +127,7 @@ function CommentDrawer({ project, count, onClose }: { project: Project; count?: 
   return (
     <Modal kind="comments" labelId="comments-title" onClose={onClose}>
       <motion.aside className="comment-drawer" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", damping: 30, stiffness: 280 }}>
-        <div className="drawer-head"><div><span className="eyebrow">Project conversation</span><h2 id="comments-title">Comments{count !== undefined && ` (${formatCount(count)})`}</h2></div><button className="icon-button" onClick={onClose} aria-label="Close comments"><X size={20} /></button></div>
+        <div className="drawer-head"><div><h2 id="comments-title">Comments{count !== undefined && count > 0 && ` (${formatCount(count)})`}</h2></div><button className="icon-button" onClick={onClose} aria-label="Close comments"><X size={20} /></button></div>
         <p className="drawer-project">{project.title}</p>
         <div className="comment-list">
           {comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-avatar">{comment.name.slice(0, 1).toUpperCase()}</div><div><strong>{comment.name}</strong><p>{comment.body}</p><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleDateString()}</time></div></article>)}
@@ -155,6 +160,10 @@ export function Reels({
   const reduceMotion = useReducedMotion();
   const filtered = useMemo(() => projects.filter((project) => project.status === "published" && (!category || project.category === category) && matchesTechnology(project, technology)), [category, technology]);
   const activeIndex = filtered.findIndex((project) => project.slug === selected.slug);
+  const jumpTo = useCallback((index: number) => {
+    const next = Math.max(0, Math.min(index, filtered.length - 1));
+    rootRef.current?.querySelectorAll<HTMLElement>("[data-slug]")[next]?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+  }, [filtered.length, reduceMotion]);
 
   useEffect(() => {
     const root = rootRef.current;
@@ -259,14 +268,12 @@ export function Reels({
       if (event.key === "Escape") onExit();
       if (["ArrowDown", "PageDown", "ArrowUp", "PageUp"].includes(event.key)) {
         event.preventDefault();
-        const direction = event.key === "ArrowDown" || event.key === "PageDown" ? 1 : -1;
-        const next = Math.max(0, Math.min(activeIndex + direction, filtered.length - 1));
-        rootRef.current?.querySelectorAll("[data-slug]")[next]?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+        jumpTo(activeIndex + (event.key === "ArrowDown" || event.key === "PageDown" ? 1 : -1));
       }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeIndex, commentsOpen, detailsOpen, filtered, onExit, reduceMotion]);
+  }, [activeIndex, commentsOpen, detailsOpen, jumpTo, onExit]);
 
   return (
     <motion.main
@@ -276,7 +283,17 @@ export function Reels({
       exit={{ opacity: 0, scale: reduceMotion ? 1 : 0.98 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
     >
-      <header className="reels-top"><button className="back-link" onClick={onExit} aria-label="Back to profile"><ArrowLeft size={18} /> <span>Project Reels</span></button><span className="reel-count">{Math.max(activeIndex + 1, 1)} <i>/</i> {filtered.length}</span></header>
+      <header className="reels-top">
+        <button className="back-link" onClick={onExit} aria-label="Back to projects"><ArrowLeft size={18} /> <span>All projects</span></button>
+        <div className="reels-top-meta">
+          {(category || technology) && <span className="reel-filter">{[category, technology].filter(Boolean).join(" · ")}</span>}
+          <div className="reel-stepper">
+            <button className="icon-button" onClick={() => jumpTo(activeIndex - 1)} disabled={activeIndex <= 0} aria-label="Previous project"><ChevronUp size={16} /></button>
+            <span className="reel-count">{Math.max(activeIndex + 1, 1)} <i>/</i> {filtered.length}</span>
+            <button className="icon-button" onClick={() => jumpTo(activeIndex + 1)} disabled={activeIndex >= filtered.length - 1} aria-label="Next project"><ChevronDown size={16} /></button>
+          </div>
+        </div>
+      </header>
       <div className="reels-scroll" ref={rootRef}>
         {filtered.map((project, index) => {
           const interaction = reactions.interactions.find((item) => item.projectId === project.id);
@@ -292,15 +309,15 @@ export function Reels({
                   <video src={project.demo_video_url ?? undefined} muted loop playsInline poster={project.thumbnail_url ?? undefined} />
                   <button className="video-toggle" onClick={() => setPaused((value) => !value)} aria-label={paused ? "Play project video" : "Pause project video"}>{paused ? <Play size={18} /> : <Pause size={18} />}</button>
                 </div> : previewMounted ? <ProjectPreview project={project} active={project.id === selected.id && !commentsOpen && !detailsOpen} /> : <div className="reel-preview reel-preview-empty" aria-hidden="true" />}
-                <div className="reel-copy"><span className="reel-handle">{profile.handle}</span><h1>{project.title}</h1><p className="reel-summary">{project.summary}</p><div className="tag-list">{project.tech_stack.slice(0, 6).map((tag) => <span className="tag" key={tag}><BrandLogo name={tag} size={13} />{tag}</span>)}{project.tech_stack.length > 6 && <button className="tag" onClick={() => setDetailsOpen(true)} aria-label={`View all ${project.tech_stack.length} technologies`}>+{project.tech_stack.length - 6} more</button>}</div><p className="reel-description">{[project.category, project.project_type, project.role, project.development_status].filter(Boolean).join(" · ")}</p><button className="text-link" onClick={() => setDetailsOpen(true)}>View Full Case Study <ArrowRight size={16} /></button></div>
+                <div className="reel-copy"><span className="reel-handle">{profile.handle}</span><h1>{project.title}</h1><p className="reel-summary">{project.summary}</p><button className="text-link" onClick={() => setDetailsOpen(true)}>View Full Case Study <ArrowRight size={16} /></button><div className="tag-list">{project.tech_stack.slice(0, 6).map((tag) => <span className="tag" key={tag}><BrandLogo name={tag} size={13} />{tag}</span>)}{project.tech_stack.length > 6 && <button className="tag" onClick={() => setDetailsOpen(true)} aria-label={`View all ${project.tech_stack.length} technologies`}>+{project.tech_stack.length - 6} more</button>}</div><p className="reel-description">{[project.category, project.project_type, project.role, project.development_status].filter(Boolean).join(" · ")}</p></div>
               </div>
               <div className="interaction-rail" aria-label="Project actions">
-                <button className={`rail-action ${isLiked ? "is-liked" : ""}`} disabled={!reactions.ready || reactions.saving !== null} onClick={() => void reactions.like(project.id)} aria-pressed={isLiked}><span className="rail-icon"><Heart size={23} fill={isLiked ? "currentColor" : "none"} /></span><span>Like</span><small>{interaction ? formatCount(interaction.like_count) : "—"}</small></button>
-                <button className="rail-action" onClick={() => setCommentsOpen(true)}><span className="rail-icon"><MessageCircle size={23} /></span><span>Comment</span><small>{interaction ? formatCount(interaction.comment_count) : "—"}</small></button>
-                <button className="rail-action" disabled={!validLive} onClick={() => validLive && window.open(project.live_url!, "_blank", "noopener,noreferrer")} aria-label={validLive ? "Open live project in a new tab" : "Demo unavailable"}><span className="rail-icon"><MonitorPlay size={23} /></span><span>Live View</span>{!validLive && <small>Demo unavailable</small>}</button>
-                <button className="rail-action" disabled={!validRepo} onClick={() => validRepo && window.open(project.repository_url!, "_blank", "noopener,noreferrer")} aria-label={validRepo ? "Open source repository in a new tab" : "Source unavailable"}><span className="rail-icon"><Code2 size={23} /></span><span>Source</span>{!validRepo && <small>Source unavailable</small>}</button>
+                <button className={`rail-action ${isLiked ? "is-liked" : ""}`} disabled={!reactions.ready || reactions.saving !== null} onClick={() => void reactions.like(project.id)} aria-pressed={isLiked}><span className="rail-icon"><Heart size={23} fill={isLiked ? "currentColor" : "none"} /></span><span>Like</span>{Boolean(interaction?.like_count) && <small>{formatCount(interaction!.like_count)}</small>}</button>
+                <button className="rail-action" onClick={() => setCommentsOpen(true)}><span className="rail-icon"><MessageCircle size={23} /></span><span>Comment</span>{Boolean(interaction?.comment_count) && <small>{formatCount(interaction!.comment_count)}</small>}</button>
+                {validLive && <button className="rail-action" onClick={() => window.open(project.live_url!, "_blank", "noopener,noreferrer")} aria-label="Open live project in a new tab"><span className="rail-icon"><MonitorPlay size={23} /></span><span>Live View</span></button>}
+                {validRepo && <button className="rail-action" onClick={() => window.open(project.repository_url!, "_blank", "noopener,noreferrer")} aria-label="Open source repository in a new tab"><span className="rail-icon"><Code2 size={23} /></span><span>Source</span></button>}
               </div>
-              <div className="reel-hint">{index < filtered.length - 1 ? <><ArrowUp size={18} /><span>Swipe up for next project</span></> : <><Check size={18} /><span>You’re all caught up</span></>}</div>
+              <div className="reel-hint">{index < filtered.length - 1 ? <><ArrowDown size={18} /><span>Next project</span></> : <><Check size={18} /><span>You're all caught up</span></>}</div>
             </article>
           );
         })}
@@ -316,7 +333,7 @@ export default function Portfolio() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as Tab | null;
-  const tab: Tab = tabParam && tabs.includes(tabParam) ? tabParam : "About";
+  const tab: Tab = tabParam && tabs.includes(tabParam) ? tabParam : "Projects";
   const categoryParam = searchParams.get("category") ?? "";
   const category = reconcileCategory(projects, null, categoryParam);
   const technologyParam = searchParams.get("technology") ?? "";
@@ -325,7 +342,6 @@ export default function Portfolio() {
   const categories = Array.from(new Set(projects.filter((project) => project.status === "published" && matchesTechnology(project, technology)).map((project) => project.category).filter(Boolean)));
   const [search, setSearch] = useState("");
   const reactions = useInteractions();
-  const [showSearch, setShowSearch] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
   const reduceMotion = useReducedMotion();
 
@@ -349,19 +365,12 @@ export default function Portfolio() {
     if (values.technology !== undefined) values.technology ? params.set("technology", values.technology) : params.delete("technology");
     if (values.tab) params.set("tab", values.tab);
     if (values.project) return projectReelUrl(values.project, params);
-    if (values.tab === "Projects") return projectsFeedUrl(params);
     const query = params.toString();
     return query ? `/?${query}` : "/";
   }
 
   function openProject(project: Project) { router.push(buildUrl({ project: project.slug, category, tab: "Projects" }), { scroll: false }); }
   function selectTab(next: Tab) {
-    if (next === "Projects") {
-      const first = projects.find((project) => project.status === "published" && (!category || project.category === category) && matchesTechnology(project, technology));
-      const target = first ? projectReelUrl(first.slug, new URLSearchParams(category ? { category } : {})) : buildUrl({ tab: next });
-      router.push(target, { scroll: false });
-      return;
-    }
     router.replace(buildUrl({ tab: next }), { scroll: false });
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
@@ -369,12 +378,10 @@ export default function Portfolio() {
   function selectTechnology(next: string, platform: "Web" | "Mobile") {
     setSearch("");
     const matchedCategory = next === "Git" ? "" : platform;
-    const first = projects.find((project) => project.status === "published" && (!matchedCategory || project.category === matchedCategory) && matchesTechnology(project, next));
     const targetParams = new URLSearchParams();
     if (matchedCategory) targetParams.set("category", matchedCategory);
     targetParams.set("technology", next);
-    const target = first ? projectReelUrl(first.slug, targetParams) : projectsFeedUrl(targetParams);
-    router.push(target, { scroll: false });
+    router.push(projectsFeedUrl(targetParams), { scroll: false });
   }
 
   useEffect(() => {
@@ -386,57 +393,78 @@ export default function Portfolio() {
     }
   }, [category, router]);
 
+  const publishedCount = projects.filter((project) => project.status === "published").length;
+  const technologyCount = technologyGroups.reduce((sum, group) => sum + group.technologies.length, 0);
+  const totalLikes = reactions.ready ? reactions.interactions.reduce((sum, item) => sum + item.like_count, 0) : 0;
+
   return (
     <MotionConfig reducedMotion="user">
       <main className="app-frame">
-        <section className="profile-panel" aria-label="Developer profile">
-        <header className="topbar">
-          <a className="wordmark" href="/" aria-label="LOTER home"><Code2 size={18} /><span>LOTER</span></a>
-          <div className="top-actions"><button className="icon-button" onClick={() => setShowSearch((value) => !value)} aria-label="Toggle project search"><Search size={18} /></button>{process.env.NODE_ENV !== "production" && <a className="icon-button" href="/admin" aria-label="Open local comment moderation"><BriefcaseBusiness size={17} /></a>}</div>
-        </header>
+        <a className="skip-link" href="#portfolio-content">Skip to content</a>
+        <aside className="profile-panel" aria-label="Developer profile">
+          <header className="topbar">
+            <a className="wordmark" href="/" aria-label="LOTER home"><Code2 size={18} /><span>LOTER</span></a>
+            <div className="top-actions">{process.env.NODE_ENV !== "production" && <a className="icon-button" href="/admin" aria-label="Open local comment moderation"><BriefcaseBusiness size={17} /></a>}</div>
+          </header>
 
-        <ProfileCover />
+          <ProfileCover />
 
-        <section className="profile-intro">
-          <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} decoding="async" /></div>
-          <div className="profile-copy"><h1>{profile.name}</h1><p className="handle">{profile.handle}</p><p className="role">{profile.role}</p><span className={`availability ${profile.available === true ? "available" : ""}`}><span />{profile.available === null ? "Availability not set" : profile.available ? "Open to opportunities" : "Currently focused"}</span></div>
-        </section>
+          <section className="profile-intro">
+            <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} decoding="async" /></div>
+            <div className="profile-copy"><h1>{profile.name}</h1><p className="handle">{profile.handle}</p><p className="role">{profile.role}</p><span className={`availability ${profile.available === true ? "available" : ""}`}><span />{profile.available === null ? "Availability not set" : profile.available ? "Open to opportunities" : "Currently focused"}</span></div>
+          </section>
 
-        <section className="profile-summary">
-          <p className="bio">{profile.bio}</p>
-          <div className="profile-stats"><div><strong>{projects.filter((project) => project.status === "published").length}</strong><span>Projects</span></div><div><strong>{technologyGroups.reduce((sum, group) => sum + group.technologies.length, 0)}</strong><span>Technologies</span></div><div><strong>{reactions.ready ? formatCount(reactions.interactions.reduce((sum, item) => sum + item.like_count, 0)) : "—"}</strong><span>Likes</span></div></div>
-          <div className="profile-actions"><button className="button button-primary" onClick={() => setContactOpen(true)}>Contact Me</button>{validMediaUrl(profile.resumeUrl) ? <a className="button button-outline" href={profile.resumeUrl} download>Download CV</a> : <button className="button button-outline" disabled title="No résumé has been published">CV unavailable</button>}</div>
-          <div className="social-links">{[
-            ["GitHub", profile.socialLinks.github, <BrandLogo name="GitHub" size={17} key="github" />],
-            ["LinkedIn", profile.socialLinks.linkedin, <BrandLogo name="LinkedIn" size={17} key="linkedin" />],
-            ["Email", profile.email ? `mailto:${profile.email}` : "", <Mail size={17} key="email" />],
-            ["Website", profile.socialLinks.website, <Globe2 size={17} key="website" />],
-          ].filter(([label, href]) => label === "Email" ? Boolean(profile.email) : validExternalUrl(String(href))).map(([label, href, icon]) => <a key={String(label)} href={String(href)} target={String(href).startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" aria-label={String(label)}>{icon}</a>)}</div>
-        </section>
+          <section className="profile-summary">
+            <p className="bio">{profile.bio}</p>
+            <div className="profile-stats">
+              <div><strong>{publishedCount}</strong><span>Projects</span></div>
+              <div><strong>{technologyCount}</strong><span>Technologies</span></div>
+              {totalLikes > 0 && <div><strong>{formatCount(totalLikes)}</strong><span>Likes</span></div>}
+            </div>
+            <div className="profile-actions"><button className="button button-primary" onClick={() => setContactOpen(true)}>Contact Me</button>{validMediaUrl(profile.resumeUrl) ? <a className="button button-outline" href={profile.resumeUrl} download>Download CV</a> : <button className="button button-outline" disabled title="No résumé has been published">CV unavailable</button>}</div>
+            <div className="social-links">{[
+              ["GitHub", profile.socialLinks.github, <BrandLogo name="GitHub" size={17} key="github" />],
+              ["LinkedIn", profile.socialLinks.linkedin, <BrandLogo name="LinkedIn" size={17} key="linkedin" />],
+              ["Email", profile.email ? `mailto:${profile.email}` : "", <Mail size={17} key="email" />],
+              ["Website", profile.socialLinks.website, <Globe2 size={17} key="website" />],
+            ].filter(([label, href]) => label === "Email" ? Boolean(profile.email) : validExternalUrl(String(href))).map(([label, href, icon]) => <a key={String(label)} href={String(href)} target={String(href).startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" aria-label={String(label)}>{icon}</a>)}</div>
+          </section>
+        </aside>
 
-        <nav className="tabs" aria-label="Portfolio sections">{tabs.map((item) => {
-          const Icon = tabIcons[item];
-          return <button key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => selectTab(item)}><Icon size={18} aria-hidden="true" /><span>{item}</span></button>;
-        })}</nav>
-        </section>
+        <div className="content-panel">
+          <nav className="tabs" aria-label="Portfolio sections">{tabs.map((item) => {
+            const Icon = tabIcons[item];
+            return <button type="button" key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => selectTab(item)}><Icon size={18} aria-hidden="true" /><span>{item}</span></button>;
+          })}</nav>
 
-        <AnimatePresence mode="wait">
-          <motion.section id="portfolio-content" key={tab} className="tab-content" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} transition={{ duration: 0.2 }}>
-            {tab === "Projects" && <>
-              <div className="section-head"><div><span className="eyebrow">Selected work</span><h2>Projects</h2><p>Explore the work, one project at a time.</p></div>{showSearch && <label className="search-field"><Search size={17} /><input autoFocus placeholder="Search projects" value={search} onChange={(event) => setSearch(event.target.value)} /></label>}</div>
-              {technology && <div className="technology-filter"><span>Using {technology}</span><button className="icon-button" aria-label="Clear technology filter" onClick={() => router.replace(buildUrl({ technology: "" }), { scroll: false })}><X size={16} /></button></div>}
-              {categories.length > 0 && <div className="filters" aria-label="Filter projects by category"><button className={!category ? "selected" : ""} onClick={() => selectCategory("")}>All <span>{projects.filter((project) => project.status === "published" && matchesTechnology(project, technology)).length}</span></button>{categoryCounts.map((item) => <button className={category === item.name ? "selected" : ""} key={item.name} onClick={() => selectCategory(item.name)}>{item.name} <span>{item.count}</span></button>)}</div>}
-              {visibleProjects.length ? <div className="project-grid">{visibleProjects.map((project) => <ProjectCard key={project.id} project={project} interaction={reactions.interactions.find((item) => item.projectId === project.id)} href={buildUrl({ project: project.slug, category, tab: "Projects" })} />)}</div> : <EmptyState title={search || category || technology ? "No matching projects" : "No projects published yet"} text={technology ? `No published projects use ${technology} with these filters yet.` : search || category ? "Try another search or category." : "Published projects will appear here."} />}
-            </>}
-            {tab === "Tech Stack" && <TechStack groups={technologyGroups} onSelect={selectTechnology} />}
-            {tab === "Experience" && <ExperienceSection />}
-            {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
-            {tab === "GitHub" && <GithubSection />}
-          </motion.section>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.section id="portfolio-content" tabIndex={-1} key={tab} className="tab-content" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} transition={{ duration: 0.2 }}>
+              {tab === "Projects" && <>
+                <div className="section-head">
+                  <div><h2>Projects</h2><p>Selected work. Open a project for the full case study.</p></div>
+                  <div className="section-actions">
+                    <div className="search-field">
+                      <Search size={17} aria-hidden="true" />
+                      <input aria-label="Search projects" placeholder="Search projects" value={search} onChange={(event) => setSearch(event.target.value)} />
+                      {search && <button type="button" className="search-clear" aria-label="Clear search" onClick={() => setSearch("")}><X size={15} /></button>}
+                    </div>
+                    {!search && visibleProjects[0] && <button type="button" className="text-link reel-entry" onClick={() => openProject(visibleProjects[0])}>View as reels <Play size={14} /></button>}
+                  </div>
+                </div>
+                {technology && <div className="technology-filter"><span>Using {technology}</span><button className="icon-button" aria-label="Clear technology filter" onClick={() => router.replace(buildUrl({ technology: "" }), { scroll: false })}><X size={16} /></button></div>}
+                {categories.length > 0 && <div className="filters" aria-label="Filter projects by category"><button className={!category ? "selected" : ""} onClick={() => selectCategory("")}>All <span>{projects.filter((project) => project.status === "published" && matchesTechnology(project, technology)).length}</span></button>{categoryCounts.map((item) => <button className={category === item.name ? "selected" : ""} key={item.name} onClick={() => selectCategory(item.name)}>{item.name} <span>{item.count}</span></button>)}</div>}
+                {visibleProjects.length ? <div className="project-grid">{visibleProjects.map((project) => <ProjectCard key={project.id} project={project} interaction={reactions.interactions.find((item) => item.projectId === project.id)} href={buildUrl({ project: project.slug, category, tab: "Projects" })} />)}</div> : <EmptyState title={search || category || technology ? "No matching projects" : "No projects published yet"} text={technology ? `No published projects use ${technology} with these filters yet.` : search || category ? "Try another search or category." : "Published projects will appear here."} />}
+              </>}
+              {tab === "Tech Stack" && <TechStack groups={technologyGroups} onSelect={selectTechnology} />}
+              {tab === "Experience" && <ExperienceSection />}
+              {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
+              {tab === "GitHub" && <GithubSection />}
+            </motion.section>
+          </AnimatePresence>
+        </div>
 
         <footer className="page-footer"><span>© {new Date().getFullYear()} {profile.name}</span><span>Built with care{process.env.NODE_ENV !== "production" && <> · <a href="/admin">Local comment review</a></>}</span></footer>
-        {reactions.error && <p className="form-message" role="alert">{reactions.error} <button className="text-link" onClick={() => void reactions.refresh()}>Retry</button></p>}
+        {reactions.error && <p className="form-message page-error" role="alert">{reactions.error} <button className="text-link" onClick={() => void reactions.refresh()}>Retry</button></p>}
         <AnimatePresence>{contactOpen && <ContactPanel onClose={() => setContactOpen(false)} />}</AnimatePresence>
       </main>
     </MotionConfig>

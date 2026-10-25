@@ -30,7 +30,7 @@ export default function ProjectDetails({ project, onClose }: { project: Project;
   return <Modal kind="details" labelId="details-title" onClose={onClose}>
     <motion.section className="details-panel" initial={{ y: 30, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }}>
       <button className="icon-button details-close" onClick={onClose} aria-label="Close details"><X size={20} /></button>
-      <span className="eyebrow">Project case study</span><h2 id="details-title">{project.title}</h2>
+      <h2 id="details-title">{project.title}</h2>
       {project.description && <><h3>Overview</h3><p>{project.description}</p></>}
       {details.problem && <><h3>Problem</h3><p>{details.problem}</p></>}
       {details.solution && <><h3>Solution</h3><p>{details.solution}</p></>}
@@ -41,7 +41,10 @@ export default function ProjectDetails({ project, onClose }: { project: Project;
       {details.challenges && <><h3>Challenges & solutions</h3><p>{details.challenges}</p></>}
       {Boolean(details.outcomes?.length) && <><h3>Results & outcomes</h3><ul>{details.outcomes!.map((outcome) => <li key={outcome}>{outcome}</li>)}</ul></>}
       {gallery.length > 0 && <Gallery images={gallery} />}
-      <div className="details-links">{validExternalUrl(project.live_url) ? <a href={project.live_url!} target="_blank" rel="noopener noreferrer">Live View <ArrowRight size={15} /></a> : <span>Demo unavailable</span>}{repositoryAvailable(project) ? <a href={project.repository_url!} target="_blank" rel="noopener noreferrer">Source Code <ArrowRight size={15} /></a> : <span>Source unavailable</span>}</div>
+      {(validExternalUrl(project.live_url) || repositoryAvailable(project)) && <div className="details-links">
+        {validExternalUrl(project.live_url) && <a href={project.live_url!} target="_blank" rel="noopener noreferrer">Live View <ArrowRight size={15} /></a>}
+        {repositoryAvailable(project) && <a href={project.repository_url!} target="_blank" rel="noopener noreferrer">Source Code <ArrowRight size={15} /></a>}
+      </div>}
     </motion.section>
   </Modal>;
 }

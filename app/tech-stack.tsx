@@ -6,6 +6,7 @@ import { technologyPlatform, type buildTechnologyGroups } from "@/lib/technologi
 import BrandLogo from "./brand-logo";
 
 const categoryIcons = [Code2, Server, Database, BrainCircuit, Workflow, Wrench, Layers];
+const workflowTools = new Set(["Claude", "OpenCode", "Gemini", "OpenAI", "DeepSeek", "GLM"]);
 
 export default function TechStack({ groups, onSelect }: {
   groups: ReturnType<typeof buildTechnologyGroups>;
@@ -23,14 +24,20 @@ export default function TechStack({ groups, onSelect }: {
       const Icon = categoryIcons[index];
       return <section className="technology-group" key={group.category} aria-labelledby={`technology-group-${index}`}>
         <h3 id={`technology-group-${index}`}>{group.category}</h3>
-        <div className="technology-grid">{technologies.map((technology) => <button
-          className="technology-card" key={technology.name} disabled={technology.projectCount === 0} onClick={() => onSelect(technology.name, platform)}
-          aria-label={technology.projectCount === 0 ? `${technology.name}: no published projects yet` : `View projects using ${technology.name}: ${technology.projectCount} published ${technology.projectCount === 1 ? "project" : "projects"}`}
-        >
-          <span className="technology-icon" aria-hidden="true"><BrandLogo name={technology.name} size={24} fallback={<Icon size={22} strokeWidth={1.5} />} /></span>
-          <strong>{technology.name}</strong>
-          <span className="technology-count">{technology.projectCount} published {technology.projectCount === 1 ? "project" : "projects"}</span>
-        </button>)}</div>
+        <div className="technology-grid">{technologies.map((technology) => {
+          const workflow = workflowTools.has(technology.name);
+          const countLabel = technology.projectCount > 0
+            ? `${technology.projectCount} published ${technology.projectCount === 1 ? "project" : "projects"}`
+            : workflow ? "Used in workflow" : "No linked projects";
+          return <button
+            className="technology-card" key={technology.name} disabled={technology.projectCount === 0} onClick={() => onSelect(technology.name, platform)}
+            aria-label={technology.projectCount === 0 ? `${technology.name}: ${workflow ? "used in workflow, no linked projects" : "no linked projects yet"}` : `View projects using ${technology.name}: ${technology.projectCount} published ${technology.projectCount === 1 ? "project" : "projects"}`}
+          >
+            <span className="technology-icon" aria-hidden="true"><BrandLogo name={technology.name} size={24} fallback={<Icon size={22} strokeWidth={1.5} />} /></span>
+            <strong>{technology.name}</strong>
+            <span className="technology-count">{countLabel}</span>
+          </button>;
+        })}</div>
       </section>;
     })}</div>
   </>;

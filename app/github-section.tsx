@@ -99,11 +99,11 @@ export default function GithubSection() {
   }, [attempt]);
 
   return <>
-    <div className="section-head"><div><span className="eyebrow">Open source activity</span><h2>GitHub</h2><p>Contributions and public repositories from the last 12 months.</p></div></div>
+    <div className="section-head"><div><h2>GitHub</h2><p>Contributions and public repositories from the last 12 months.</p></div></div>
     {state.status === "loading" && <div className="github-panel github-loading" role="status">Loading GitHub activity…</div>}
     {state.status === "unavailable" && <div className="github-panel github-fallback">
       <BrandLogo name="GitHub" size={24} fallback={<span className="github-fallback-mark">GH</span>} />
-      <div><strong>GitHub activity is unavailable right now.</strong><p>The profile link still works.</p></div>
+      <div><strong>Live GitHub activity is unavailable.</strong><p>Browse the profile directly, or try again in a moment.</p></div>
       <div className="github-fallback-actions">
         {profileUrl && <a className="text-link" href={profileUrl} target="_blank" rel="noopener noreferrer">View profile <ArrowUpRight size={14} /></a>}
         <button className="text-link" onClick={() => setAttempt((value) => value + 1)}><RefreshCw size={14} /> Try again</button>

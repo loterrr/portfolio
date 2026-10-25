@@ -30,11 +30,11 @@ test("project cards use dedicated reel paths and preserve category and technolog
   assert.equal(projectReelUrl("a/b", new URLSearchParams()), "/projects/a%2Fb");
 });
 
-test("the Projects tab opens the dedicated feed instead of changing the profile tab", () => {
-  assert.equal(projectsFeedUrl(new URLSearchParams("tab=Tech+Stack&technology=React")), "/projects?technology=React");
+test("project feed links open the profile's Projects tab", () => {
+  assert.equal(projectsFeedUrl(new URLSearchParams("tab=Tech+Stack&technology=React")), "/?tab=Projects&technology=React");
 });
 
-test("returning to the profile cannot redirect straight back into the feed", () => {
-  assert.equal(profileProjectsUrl(new URLSearchParams("tab=Projects&project=peer-drop&category=Web")), "/?category=Web");
-  assert.equal(profileProjectsUrl(new URLSearchParams()), "/");
+test("returning to the profile always lands on the Projects tab", () => {
+  assert.equal(profileProjectsUrl(new URLSearchParams("tab=Projects&project=peer-drop&category=Web")), "/?tab=Projects&category=Web");
+  assert.equal(profileProjectsUrl(new URLSearchParams()), "/?tab=Projects");
 });

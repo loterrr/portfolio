@@ -20,12 +20,21 @@ export function projectReelUrl(slug: string, params: URLSearchParams) {
   return projectRoute(`/projects/${encodeURIComponent(slug)}`, params);
 }
 
+function profileTabUrl(values: URLSearchParams, tab: string) {
+  const params = new URLSearchParams();
+  params.set("tab", tab);
+  for (const [key, value] of values) {
+    if (key !== "tab" && key !== "project") params.set(key, value);
+  }
+  return `/?${params}`;
+}
+
 export function projectsFeedUrl(params: URLSearchParams) {
-  return projectRoute("/projects", params);
+  return profileTabUrl(params, "Projects");
 }
 
 export function profileProjectsUrl(params: URLSearchParams) {
-  return projectRoute("/", params);
+  return profileTabUrl(params, "Projects");
 }
 
 export function routeSearchParams(values: Record<string, string | string[] | undefined>) {
