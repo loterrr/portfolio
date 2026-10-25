@@ -84,14 +84,15 @@ button:disabled { cursor: not-allowed; }
 .section-head > div:first-child { min-width: 0; }
 .section-head h2, .drawer-head h2 { margin: 0; font-size: 29px; line-height: 1.08; letter-spacing: -.045em; text-wrap: balance; }
 .section-head p { max-width: 62ch; margin: 9px 0 0; color: var(--muted); font-size: 14px; }
-.section-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.section-actions { display: flex; align-items: center; gap: 10px; }
 .search-field { width: 100%; min-width: 0; height: 44px; display: flex; flex: 1 1 190px; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--line); border-radius: 12px; color: var(--muted); background: var(--surface); }
 .search-field:focus-within { border-color: rgba(230,230,230,.4); }
-.search-field input { width: 100%; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 14px; }
+.search-field > svg { flex-shrink: 0; }
+.search-field input { width: 100%; min-width: 0; border: 0; outline: 0; color: var(--ink); background: transparent; font-size: 14px; }
 .search-field input::placeholder { color: var(--quiet); }
 .search-clear { flex: 0 0 auto; display: grid; place-items: center; width: 28px; height: 28px; padding: 0; border: 0; border-radius: 50%; color: var(--muted); background: rgba(255,255,255,.06); cursor: pointer; }
 .search-clear:hover { color: var(--ink); background: rgba(255,255,255,.12); }
-.reel-entry { flex: 0 0 auto; margin: 0; white-space: nowrap; }
+.reel-entry { flex: 0 0 auto; min-height: 44px; margin: 0; white-space: nowrap; }
 .filters { display: flex; align-items: center; gap: 8px; overflow-x: auto; padding: 2px 0 16px; scrollbar-width: none; }
 .filters::-webkit-scrollbar { display: none; }
 .filters button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 9px; min-height: 36px; padding: 0 13px; border: 1px solid var(--line); border-radius: 999px; color: #c3c2cb; background: transparent; font-size: 12px; cursor: pointer; transition: color .15s ease, background .15s ease, border-color .15s ease; }
@@ -342,7 +343,6 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .section-head p { font-size: 15px; }
   .section-actions { flex-shrink: 0; flex-wrap: nowrap; }
   .section-actions .search-field { flex: 0 0 230px; width: 230px; }
-  .search-field { height: 46px; }
   .search-field input { font-size: 14px; }
   .filters { padding-bottom: 18px; }
   .filters button { min-height: 38px; font-size: 13px; }

@@ -445,7 +445,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
                       <input aria-label="Search projects" placeholder="Search projects" value={search} onChange={(event) => setSearch(event.target.value)} />
                       {search && <button type="button" className="search-clear" aria-label="Clear search" onClick={() => setSearch("")}><X size={15} /></button>}
                     </div>
-                    {!search && visibleProjects[0] && <button type="button" className="text-link reel-entry" onClick={() => openProject(visibleProjects[0])}>View as reels <Play size={14} /></button>}
+                    {!search && visibleProjects[0] && <button type="button" className="button button-outline reel-entry" onClick={() => openProject(visibleProjects[0])}><Play size={14} aria-hidden="true" />View as reels</button>}
                   </div>
                 </div>
                 {technology && <div className="technology-filter"><span>Using {technology}</span><button className="icon-button" aria-label="Clear technology filter" onClick={() => router.replace(buildUrl({ technology: "" }), { scroll: false })}><X size={16} /></button></div>}
