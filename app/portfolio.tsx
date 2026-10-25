@@ -368,7 +368,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
 
   function openProject(project: Project) { router.push(buildUrl({ project: project.slug, category, tab: "Projects" }), { scroll: false }); }
   function selectTab(next: Tab) {
-    router.replace(buildUrl({ tab: next }), { scroll: false });
+    window.history.replaceState(null, "", buildUrl({ tab: next }));
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
   function selectCategory(next: string) { router.replace(buildUrl({ category: next }), { scroll: false }); }
@@ -434,8 +434,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
             return <button type="button" key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => selectTab(item)}><Icon size={18} aria-hidden="true" /><span>{item}</span></button>;
           })}</nav>
 
-          <AnimatePresence mode="wait">
-            <motion.section id="portfolio-content" tabIndex={-1} key={tab} className="tab-content" initial={{ opacity: 0, y: reduceMotion ? 0 : 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 4 }} transition={{ duration: 0.2 }}>
+            <section id="portfolio-content" tabIndex={-1} key={tab} className="tab-content">
               {tab === "Projects" && <>
                 <div className="section-head">
                   <div><h2>Projects</h2><p>Selected work. Open a project for the full case study.</p></div>
@@ -456,8 +455,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
               {tab === "Experience" && <ExperienceSection />}
               {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
               {tab === "GitHub" && <GithubSection initialStats={githubStats} />}
-            </motion.section>
-          </AnimatePresence>
+            </section>
         </div>
 
         <footer className="page-footer"><span>© {new Date().getFullYear()} {profile.name}</span><span>Built with care{process.env.NODE_ENV !== "production" && <> · <a href="/admin">Local comment review</a></>}</span></footer>
