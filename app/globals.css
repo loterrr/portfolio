@@ -366,7 +366,7 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .github-language-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .contact-strip { flex-direction: row; align-items: center; justify-content: space-between; padding: 26px 30px; }
   .page-footer { font-size: 12.5px; }
-  .reels-shell { inset: 24px auto; height: calc(100dvh - 48px); border-radius: 24px; }
+  .reels-shell { inset: 24px 0; height: calc(100dvh - 48px); border-radius: 24px; }
   .reels-top { flex-basis: 64px; padding: 0 24px; }
   .back-link { font-size: 15px; }
   .reel-filter { max-width: 220px; font-size: 13px; }
