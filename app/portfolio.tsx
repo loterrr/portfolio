@@ -398,6 +398,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
     <MotionConfig reducedMotion="user">
       <main className="app-frame">
         <a className="skip-link" href="#portfolio-content">Skip to content</a>
+        <div className="profile-column">
         <aside className="profile-panel" aria-label="Developer profile">
           <header className="topbar">
             <a className="wordmark" href="/" aria-label="LOTER home"><Code2 size={18} /><span>LOTER</span></a>
@@ -427,6 +428,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
             ].filter(([label, href]) => label === "Email" ? Boolean(profile.email) : validExternalUrl(String(href))).map(([label, href, icon]) => <a key={String(label)} href={String(href)} target={String(href).startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" aria-label={String(label)}>{icon}</a>)}</div>
           </section>
         </aside>
+        </div>
 
         <div className="content-panel">
           <nav className="tabs" aria-label="Portfolio sections">{tabs.map((item) => {
@@ -434,7 +436,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
             return <button type="button" key={item} className={tab === item ? "active" : ""} aria-current={tab === item ? "page" : undefined} onClick={() => selectTab(item)}><Icon size={18} aria-hidden="true" /><span>{item}</span></button>;
           })}</nav>
 
-            <section id="portfolio-content" tabIndex={-1} key={tab} className="tab-content">
+            <motion.section id="portfolio-content" tabIndex={-1} key={tab} className="tab-content" initial={{ opacity: reduceMotion ? 1 : 0.85 }} animate={{ opacity: 1 }} transition={{ duration: reduceMotion ? 0 : 0.15, ease: "easeOut" }}>
               {tab === "Projects" && <>
                 <div className="section-head">
                   <div><h2>Projects</h2><p>Selected work. Open a project for the full case study.</p></div>
@@ -455,7 +457,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
               {tab === "Experience" && <ExperienceSection />}
               {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
               {tab === "GitHub" && <GithubSection initialStats={githubStats} />}
-            </section>
+            </motion.section>
         </div>
 
         <footer className="page-footer"><span>© {new Date().getFullYear()} {profile.name}</span><span>Built with care{process.env.NODE_ENV !== "production" && <> · <a href="/admin">Local comment review</a></>}</span></footer>
