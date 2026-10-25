@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } fro
 import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import {
-  ArrowDown, ArrowLeft, ArrowRight, BriefcaseBusiness, Check, ChevronDown, ChevronUp,
+  ArrowDown, ArrowLeft, ArrowRight, BriefcaseBusiness, Check,
   Layers, Code2, Globe2, Heart, ImageIcon,
   GitBranch, Mail, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
   X,
@@ -14,6 +14,7 @@ import {
   profile, projects, technologies,
   type Project,
 } from "@/lib/portfolio";
+import type { GithubStats } from "@/lib/github";
 import { interactionRequest, loadComments, useInteractions } from "@/lib/interactions";
 import type { ProjectComment, ProjectInteraction } from "@/lib/interaction-types";
 import { projectReelUrl, projectsFeedUrl, reconcileCategory } from "@/lib/project-navigation";
@@ -287,11 +288,7 @@ export function Reels({
         <button className="back-link" onClick={onExit} aria-label="Back to projects"><ArrowLeft size={18} /> <span>All projects</span></button>
         <div className="reels-top-meta">
           {(category || technology) && <span className="reel-filter">{[category, technology].filter(Boolean).join(" · ")}</span>}
-          <div className="reel-stepper">
-            <button className="icon-button" onClick={() => jumpTo(activeIndex - 1)} disabled={activeIndex <= 0} aria-label="Previous project"><ChevronUp size={16} /></button>
-            <span className="reel-count">{Math.max(activeIndex + 1, 1)} <i>/</i> {filtered.length}</span>
-            <button className="icon-button" onClick={() => jumpTo(activeIndex + 1)} disabled={activeIndex >= filtered.length - 1} aria-label="Next project"><ChevronDown size={16} /></button>
-          </div>
+          <span className="reel-count">{Math.max(activeIndex + 1, 1)} <i>/</i> {filtered.length}</span>
         </div>
       </header>
       <div className="reels-scroll" ref={rootRef}>
@@ -329,7 +326,7 @@ export function Reels({
   );
 }
 
-export default function Portfolio() {
+export default function Portfolio({ githubStats }: { githubStats: GithubStats | null }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab") as Tab | null;
@@ -458,7 +455,7 @@ export default function Portfolio() {
               {tab === "Tech Stack" && <TechStack groups={technologyGroups} onSelect={selectTechnology} />}
               {tab === "Experience" && <ExperienceSection />}
               {tab === "About" && <AboutSection onContact={() => setContactOpen(true)} />}
-              {tab === "GitHub" && <GithubSection />}
+              {tab === "GitHub" && <GithubSection initialStats={githubStats} />}
             </motion.section>
           </AnimatePresence>
         </div>

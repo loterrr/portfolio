@@ -7,7 +7,6 @@ import { profile } from "@/lib/portfolio";
 import BrandLogo from "./brand-logo";
 
 type State =
-  | { status: "loading" }
   | { status: "ready"; data: GithubStats }
   | { status: "unavailable" };
 
@@ -78,14 +77,14 @@ function GithubContent({ stats }: { stats: GithubStats }) {
   </>;
 }
 
-export default function GithubSection() {
-  const [state, setState] = useState<State>({ status: "loading" });
+export default function GithubSection({ initialStats }: { initialStats: GithubStats | null }) {
+  const [state, setState] = useState<State>(initialStats ? { status: "ready", data: initialStats } : { status: "unavailable" });
   const [attempt, setAttempt] = useState(0);
   const profileUrl = profile.socialLinks.github;
 
   useEffect(() => {
+    if (initialStats && attempt === 0) return;
     const controller = new AbortController();
-    setState({ status: "loading" });
     fetch("/api/github", { signal: controller.signal, cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error("unavailable");
@@ -96,11 +95,10 @@ export default function GithubSection() {
         if (!controller.signal.aborted) setState({ status: "unavailable" });
       });
     return () => controller.abort();
-  }, [attempt]);
+  }, [attempt, initialStats]);
 
   return <>
     <div className="section-head"><div><h2>GitHub</h2><p>Contributions and public repositories from the last 12 months.</p></div></div>
-    {state.status === "loading" && <div className="github-panel github-loading" role="status">Loading GitHub activity…</div>}
     {state.status === "unavailable" && <div className="github-panel github-fallback">
       <BrandLogo name="GitHub" size={24} fallback={<span className="github-fallback-mark">GH</span>} />
       <div><strong>Live GitHub activity is unavailable.</strong><p>Browse the profile directly, or try again in a moment.</p></div>

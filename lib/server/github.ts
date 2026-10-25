@@ -55,6 +55,7 @@ async function request(username: string): Promise<GithubStats> {
       variables: { login: username, from: from.toISOString(), to: to.toISOString() },
     }),
     cache: "no-store",
+    signal: AbortSignal.timeout(3000),
   });
   if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
   const payload = await response.json() as { data?: GithubGraphqlData; errors?: unknown[] };

@@ -188,7 +188,6 @@ button.tag { cursor: pointer; }
 .github-language-list li { min-width: 0; display: flex; align-items: center; gap: 7px; color: #d2d1d9; font-size: 13px; }
 .github-language-dot { flex: 0 0 auto; width: 8px; height: 8px; border-radius: 50%; }
 .github-language-list em { margin-left: auto; color: var(--quiet); font-style: normal; font-variant-numeric: tabular-nums; }
-.github-loading { min-height: 190px; display: grid; place-items: center; color: var(--muted); font-size: 14px; }
 .github-fallback { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 14px; }
 .github-fallback > div:not(.github-fallback-actions) { min-width: 0; }
 .github-fallback strong { font-size: 15px; }
@@ -230,16 +229,13 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
 .back-link:hover { color: var(--accent); }
 .reels-top-meta { min-width: 0; display: flex; align-items: center; gap: 12px; }
 .reel-filter { max-width: 150px; overflow: hidden; padding: 4px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
-.reel-stepper { display: flex; align-items: center; gap: 1px; }
-.reel-stepper .icon-button { width: 30px; height: 30px; border: 1px solid var(--line); }
-.reel-stepper .icon-button:disabled { opacity: .4; }
 .reel-count { color: #b4b3be; font-variant-numeric: tabular-nums; font-size: 13px; }
 .reel-count i { padding: 0 4px; color: var(--quiet); font-style: normal; }
 .reels-scroll { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; scroll-snap-type: y mandatory; scrollbar-width: none; background: #101114; }
 .reels-scroll::-webkit-scrollbar { display: none; }
 .reel { content-visibility: auto; position: relative; min-height: 100%; height: 100%; display: grid; grid-template-columns: minmax(0, 1fr) 52px; grid-template-rows: auto minmax(0, 1fr) 46px; gap: 0 4px; padding: 0 10px max(8px, env(safe-area-inset-bottom)); scroll-snap-align: start; scroll-snap-stop: always; }
 .reel-content { display: contents; }
-.reel-preview { grid-column: 1 / -1; grid-row: 1; position: relative; align-self: start; justify-self: center; width: min(100%, calc(54vh * 1.6)); aspect-ratio: 16 / 10; max-height: 54vh; overflow: hidden; display: grid; place-items: center; border: 1px solid #363741; border-radius: 14px; background: #17181d; }
+.reel-preview { grid-column: 1 / -1; grid-row: 1; position: relative; align-self: start; justify-self: center; width: min(100%, calc(54vh * 16 / 9)); aspect-ratio: 16 / 9; max-height: 54vh; overflow: hidden; display: grid; place-items: center; border: 1px solid #363741; border-radius: 14px; background: #17181d; }
 .reel-preview img, .reel-preview video { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: contain; }
 .reel-preview[aria-roledescription="carousel"] { touch-action: pan-y pinch-zoom; }
 .preview-expand { position: absolute; top: 6px; right: 6px; width: 44px; height: 44px; color: white; }
@@ -376,7 +372,7 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .reel-filter { max-width: 220px; font-size: 13px; }
   .reel-count { font-size: 14px; }
   .reel { grid-template-columns: minmax(0, 1fr) 72px; grid-template-rows: auto minmax(0, 1fr) 54px; gap: 0 10px; padding: 0 16px 14px; }
-  .reel-preview { border-radius: 16px; }
+  .reel-preview { grid-column: 1; border-radius: 16px; }
   .reel-copy { padding: 18px 16px 8px 4px; }
   .reel-copy h1 { font-size: clamp(26px, 2.5vw, 34px); margin-bottom: 8px; }
   .reel-summary { font-size: 16px; max-width: 70ch; }
@@ -412,7 +408,6 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .project-cover { aspect-ratio: 1.45; }
   .section-head h2 { font-size: 36px; }
   .section-head p { font-size: 15.5px; }
-  .reels-top .reel-stepper .icon-button { width: 32px; height: 32px; }
 }
 
 @media (min-width: 1180px) {
@@ -421,7 +416,7 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
 
 @media (min-width: 700px) and (max-height: 820px) {
   .reel { grid-template-rows: auto minmax(0, 1fr) 44px; padding-bottom: 10px; }
-  .reel-preview { width: min(100%, calc((100dvh - 450px) * 1.6)); max-height: calc(100dvh - 450px); }
+  .reel-preview { width: min(100%, calc((100dvh - 450px) * 16 / 9)); max-height: calc(100dvh - 450px); }
 }
 
 @media (max-width: 380px) {
