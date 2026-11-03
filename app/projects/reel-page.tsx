@@ -10,6 +10,7 @@ import { useInteractions } from "@/lib/interactions";
 import { Reels } from "../portfolio";
 import ProfilePanel from "../profile-panel";
 import ContactPanel from "../contact-panel";
+import PageFooter from "../page-footer";
 
 export default function ProjectReelPage({ selected }: { selected: Project }) {
   const router = useRouter();
@@ -44,6 +45,7 @@ export default function ProjectReelPage({ selected }: { selected: Project }) {
     <main className="app-frame reel-layout">
       <ProfilePanel totalLikes={totalLikes} onContact={() => setContactOpen(true)} />
       <div className="content-panel"><Reels selected={activeProject} category={category} technology={technology} reactions={reactions} onSelect={select} onExit={() => router.replace(profileProjectsUrl(params), { scroll: false })} /></div>
+      <PageFooter />
       <AnimatePresence>{contactOpen && <ContactPanel onClose={() => setContactOpen(false)} />}</AnimatePresence>
     </main>
   </MotionConfig>;

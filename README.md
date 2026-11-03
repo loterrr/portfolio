@@ -31,7 +31,7 @@ Open `/admin` on the local development server to approve or delete comments. Bot
 
 The database and its SQLite journal files are ignored by Git. To back up local data, stop the server and copy the whole `data/` folder. Restore that folder while the server is stopped. Do not put database files inside `public/`.
 
-Existing browser `localStorage` is left untouched and is not automatically imported, because visitors can edit those values. Supabase migration and public owner authentication remain the last phase; they are not configured yet.
+Existing browser `localStorage` is left untouched and is not automatically imported, because visitors can edit those values. The server uses Supabase when its URL and API key are configured; otherwise, it uses the local SQLite database described above. Public owner authentication is not implemented.
 
 ## Verification
 
@@ -56,6 +56,14 @@ Technology cards are grouped into Frontend, Backend, Databases, AI / Machine Lea
 Project associations come from each published project's `tech_stack`. Matching ignores casing and surrounding whitespace, and repeated entries in one project count once. Unconfigured project technologies appear under Other. Draft projects do not contribute to public counts.
 
 Tech Stack displays the curated main technologies in `lib/portfolio.ts`; project utility dependencies are kept in case studies and do not create extra cards. Web and Mobile / App selectors separate the stacks, with Flutter, Dart, Riverpod, SQLite, and Google ML Kit in Mobile / App. Docker Compose and Supabase service variants count toward their main technology once per project. Selecting a technology opens Projects with platform and technology URL filters. The filters stay active while browsing reels. A direct project link clears an incompatible technology filter so the requested project remains visible. There are no proficiency percentages.
+
+## GitHub tab
+
+The GitHub tab reads the profile in `profile.socialLinks.github` and shows a 12-month contribution heatmap, active days, longest streak, public repository count, and top languages. Forked repositories are excluded from language totals.
+
+Set `GITHUB_TOKEN` to a classic personal access token with the `read:user` scope. The token is read-only, stays on the server, and is never sent to the browser. Add it to `.env.local` locally and to the Vercel environment variables for production. The server caches results for six hours and shows a profile link instead of fabricated data when the token is missing or GitHub is unavailable.
+
+Private contributions are included in the aggregate when GitHub exposes them. Private repository names and details are not displayed.
 
 ## Reference Parts 9–17
 

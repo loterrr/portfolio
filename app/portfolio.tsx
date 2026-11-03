@@ -28,6 +28,7 @@ import LoadingFeedback from "./loading-feedback";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
 import ProfilePanel from "./profile-panel";
+import PageFooter from "./page-footer";
 import GithubSection from "./github-section";
 import { AboutSection, ExperienceSection } from "./portfolio-sections";
 
@@ -386,7 +387,6 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
   function openProject(project: Project) { router.push(buildUrl({ project: project.slug, category, tab: "Projects" }), { scroll: false }); }
   function selectTab(next: Tab) {
     window.history.replaceState(null, "", buildUrl({ tab: next }));
-    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   }
   function selectCategory(next: string) { router.replace(buildUrl({ category: next }), { scroll: false }); }
   function selectTechnology(next: string, platform: "Web" | "Mobile") {
@@ -445,7 +445,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
             </motion.section>
         </div>
 
-        <footer className="page-footer"><span>© {new Date().getFullYear()} {profile.name}</span><span>Built with care{process.env.NODE_ENV !== "production" && <> · <a href="/admin">Local comment review</a></>}</span></footer>
+        <PageFooter />
         {reactions.error && <p className="form-message page-error" role="alert">{reactions.error} <button className="text-link" onClick={() => void reactions.refresh()}>Retry</button></p>}
         <AnimatePresence>{contactOpen && <ContactPanel onClose={() => setContactOpen(false)} />}</AnimatePresence>
       </main>

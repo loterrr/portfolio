@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  --footer-height: 72px;
   color-scheme: dark;
   --bg: #000;
   --surface: #101114;
@@ -233,13 +234,13 @@ button.tag { cursor: pointer; }
 .contact-strip { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; margin-top: 28px; padding: 22px; border-radius: 18px; background: #151515; }
 .contact-strip h3 { margin: 0; font-size: 21px; letter-spacing: -.035em; }
 .contact-strip .button { flex-shrink: 0; white-space: nowrap; }
-.page-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; padding: 18px 2px 0; border-top: 1px solid var(--line); color: var(--quiet); font-size: 12px; }
+.page-footer { position: fixed; inset: auto 0 0; z-index: 10; height: calc(var(--footer-height) + env(safe-area-inset-bottom)); display: flex; flex-wrap: wrap; align-items: center; align-content: center; justify-content: center; gap: 2px 16px; padding: 8px max(20px, calc((100vw - 1240px) / 2)) calc(8px + env(safe-area-inset-bottom)); border-top: 1px solid var(--line); background: var(--bg); color: var(--muted); text-align: center; font-size: 12px; }
 .page-footer a:hover { color: var(--accent); }
 .page-error { margin: 16px 0 0; color: #ddd; font-size: 13px; }
 
 body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; background: rgba(0,0,0,.9); pointer-events: none; animation: reels-scrim-in .18s ease-out; }
 @keyframes reels-scrim-in { from { opacity: 0; } }
-.reels-shell { position: fixed; inset: 14px auto; left: 0; right: 0; width: min(980px, calc(100% - 16px)); height: calc(100dvh - 28px); margin: 0 auto; z-index: 5; display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; border: 1px solid #282828; background: #101114; }
+.reels-shell { position: fixed; inset: 14px auto; left: 0; right: 0; width: min(980px, calc(100% - 16px)); height: calc(100dvh - 28px - var(--footer-height) - env(safe-area-inset-bottom)); margin: 0 auto; z-index: 5; display: flex; flex-direction: column; overflow: hidden; border-radius: 20px; border: 1px solid #282828; background: #101114; }
 .reels-top { z-index: 2; flex: 0 0 54px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 0 16px; background: #101114; }
 .back-link { display: inline-flex; align-items: center; gap: 9px; border: 0; padding: 8px 0; color: #ecebf0; background: transparent; font-size: 14px; font-weight: 620; cursor: pointer; white-space: nowrap; }
 .back-link:hover { color: var(--accent); }
@@ -380,8 +381,9 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .github-stat span { font-size: 13px; }
   .github-language-list { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .contact-strip { flex-direction: row; align-items: center; justify-content: space-between; padding: 26px 30px; }
-  .page-footer { font-size: 12.5px; }
-  .reels-shell { inset: 24px 0; height: calc(100dvh - 48px); border-radius: 24px; }
+  :root { --footer-height: 48px; }
+  .page-footer { justify-content: space-between; font-size: 12.5px; }
+  .reels-shell { inset: 24px 0; height: calc(100dvh - 48px - var(--footer-height) - env(safe-area-inset-bottom)); border-radius: 24px; }
   .reels-top { flex-basis: 64px; padding: 0 24px; }
   .back-link { font-size: 15px; }
   .reel-filter { max-width: 220px; font-size: 13px; }
@@ -411,8 +413,8 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   body.reels-open::before { display: none; }
   .reel-layout.app-frame { padding-bottom: 32px; grid-template-rows: auto; }
   .reel-layout > .profile-column { display: block; }
-  .reel-layout .profile-panel { min-height: calc(100dvh - 64px); height: 100%; }
-  .reel-layout > .content-panel { position: relative; align-self: stretch; min-height: calc(100dvh - 64px); }
+  .reel-layout .profile-panel { min-height: calc(100dvh - 64px - var(--footer-height) - env(safe-area-inset-bottom)); height: 100%; }
+  .reel-layout > .content-panel { position: relative; align-self: stretch; min-height: calc(100dvh - 64px - var(--footer-height) - env(safe-area-inset-bottom)); }
   .reel-layout .reels-shell { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
   .app-frame { width: min(1240px, calc(100% - 64px)); display: grid; grid-template-columns: 330px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 52px; align-items: start; padding: 32px 0 44px; }
   .profile-column { grid-column: 1; grid-row: 1; align-self: stretch; min-width: 0; }
@@ -452,6 +454,15 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
   .reel-filter { max-width: 92px; }
   .notice { right: 14px; bottom: 14px; }
 }
+.app-frame, .reel-layout.app-frame { padding-bottom: calc(32px + var(--footer-height) + env(safe-area-inset-bottom)); }
+.tabs { position: sticky; top: 0; z-index: 3; background: var(--bg); }
+
+@media (min-width: 1024px) {
+  .app-frame:not(.reel-layout) > .content-panel { display: flex; flex-direction: column; height: calc(100dvh - 64px - var(--footer-height) - env(safe-area-inset-bottom)); min-height: 0; }
+  .app-frame:not(.reel-layout) .tabs { flex-shrink: 0; }
+  .app-frame:not(.reel-layout) .tab-content { flex: 1; min-height: 0; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #454545 var(--bg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
