@@ -28,7 +28,6 @@ import LoadingFeedback from "./loading-feedback";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
 import ProfilePanel from "./profile-panel";
-import PageFooter from "./page-footer";
 import GithubSection from "./github-section";
 import { AboutSection, ExperienceSection } from "./portfolio-sections";
 
@@ -444,8 +443,6 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
               {tab === "GitHub" && <GithubSection initialStats={githubStats} />}
             </motion.section>
         </div>
-
-        <PageFooter />
         {reactions.error && <p className="form-message page-error" role="alert">{reactions.error} <button className="text-link" onClick={() => void reactions.refresh()}>Retry</button></p>}
         <AnimatePresence>{contactOpen && <ContactPanel onClose={() => setContactOpen(false)} />}</AnimatePresence>
       </main>

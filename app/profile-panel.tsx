@@ -40,6 +40,7 @@ export default function ProfilePanel({ totalLikes, onContact }: { totalLikes: nu
               ["Email", profile.email ? `mailto:${profile.email}` : "", <Mail size={17} key="email" />],
               ["Website", profile.socialLinks.website, <Globe2 size={17} key="website" />],
             ].filter(([label, href]) => label === "Email" ? Boolean(profile.email) : validExternalUrl(String(href))).map(([label, href, icon]) => <a key={String(label)} href={String(href)} target={String(href).startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" aria-label={String(label)}>{icon}</a>)}</div>
+            <p className="profile-copyright">© {new Date().getFullYear()} {profile.name}</p>
           </section>
         </aside>
         </div>
