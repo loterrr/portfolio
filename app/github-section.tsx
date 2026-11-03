@@ -5,9 +5,11 @@ import { ArrowUpRight, RefreshCw } from "lucide-react";
 import type { GithubStats } from "@/lib/github";
 import { profile } from "@/lib/portfolio";
 import BrandLogo from "./brand-logo";
+import LoadingFeedback from "./loading-feedback";
 
 type State =
   | { status: "ready"; data: GithubStats }
+  | { status: "loading" }
   | { status: "unavailable" };
 
 const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
@@ -78,14 +80,14 @@ function GithubContent({ stats }: { stats: GithubStats }) {
 }
 
 export default function GithubSection({ initialStats }: { initialStats: GithubStats | null }) {
-  const [state, setState] = useState<State>(initialStats ? { status: "ready", data: initialStats } : { status: "unavailable" });
+  const [state, setState] = useState<State>(initialStats ? { status: "ready", data: initialStats } : { status: "loading" });
   const [attempt, setAttempt] = useState(0);
   const profileUrl = profile.socialLinks.github;
 
   useEffect(() => {
     if (initialStats && attempt === 0) return;
     const controller = new AbortController();
-    fetch("/api/github", { signal: controller.signal, cache: "no-store" })
+    fetch("/api/github", { signal: AbortSignal.any([controller.signal, AbortSignal.timeout(30_000)]), cache: "no-store" })
       .then(async (response) => {
         if (!response.ok) throw new Error("unavailable");
         return await response.json() as GithubStats;
@@ -99,12 +101,13 @@ export default function GithubSection({ initialStats }: { initialStats: GithubSt
 
   return <>
     <div className="section-head"><div><h2>GitHub</h2><p>Contributions and public repositories from the last 12 months.</p></div></div>
+    {state.status === "loading" && <LoadingFeedback key={attempt} label="Loading GitHub activity" />}
     {state.status === "unavailable" && <div className="github-panel github-fallback">
       <BrandLogo name="GitHub" size={24} fallback={<span className="github-fallback-mark">GH</span>} />
       <div><strong>Live GitHub activity is unavailable.</strong><p>Browse the profile directly, or try again in a moment.</p></div>
       <div className="github-fallback-actions">
         {profileUrl && <a className="text-link" href={profileUrl} target="_blank" rel="noopener noreferrer">View profile <ArrowUpRight size={14} /></a>}
-        <button className="text-link" onClick={() => setAttempt((value) => value + 1)}><RefreshCw size={14} /> Try again</button>
+        <button className="text-link" onClick={() => { setState({ status: "loading" }); setAttempt((value) => value + 1); }}><RefreshCw size={14} /> Try again</button>
       </div>
     </div>}
     {state.status === "ready" && <GithubContent stats={state.data} />}

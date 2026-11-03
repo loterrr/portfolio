@@ -28,6 +28,21 @@ button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visib
 button:disabled { cursor: not-allowed; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 .loading-shell { min-height: 100vh; background: var(--bg); }
+.loading-feedback { width: 100%; padding: 16px 0; }
+.loading-skeleton { display: grid; gap: 12px; }
+.loading-skeleton span { display: block; height: 14px; border-radius: 6px; background: #292a30; }
+.loading-skeleton span:first-child { width: 40%; height: 24px; }
+.loading-skeleton span:last-child { width: 70%; }
+.loading-detail { margin-top: 16px; color: var(--muted); font-size: 14px; }
+.loading-detail p { margin: 8px 0 0; }
+.loading-detail progress { width: 100%; height: 4px; accent-color: var(--ink); }
+.page-skeleton { width: min(880px, calc(100% - 40px)); margin: 0 auto; padding-top: 60px; }
+.page-skeleton .loading-skeleton span:first-child { width: 100%; height: 180px; }
+.page-skeleton .loading-skeleton span:nth-child(2) { height: 36px; }
+.preview-loading { position: absolute; inset: 0; display: grid; align-content: center; padding: 20px; background: var(--surface); pointer-events: none; }
+.reaction-loading { position: absolute; bottom: 8px; left: 16px; width: min(320px, calc(100% - 32px)); padding: 8px; background: var(--surface); pointer-events: none; }
+.reaction-loading .loading-skeleton { display: none; }
+.reel-layout > .profile-column { display: none; }
 .skip-link { position: fixed; top: 12px; left: 12px; z-index: 60; padding: 10px 16px; border-radius: 999px; color: #111; background: #eee; font-size: 13px; font-weight: 620; transform: translateY(-200%); transition: transform .15s ease; }
 .skip-link:focus { transform: none; }
 
@@ -393,6 +408,12 @@ body.reels-open::before { content: ""; position: fixed; inset: 0; z-index: 4; ba
 }
 
 @media (min-width: 1024px) {
+  body.reels-open::before { display: none; }
+  .reel-layout.app-frame { padding-bottom: 32px; grid-template-rows: auto; }
+  .reel-layout > .profile-column { display: block; }
+  .reel-layout .profile-panel { min-height: calc(100dvh - 64px); height: 100%; }
+  .reel-layout > .content-panel { position: relative; align-self: stretch; min-height: calc(100dvh - 64px); }
+  .reel-layout .reels-shell { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; }
   .app-frame { width: min(1240px, calc(100% - 64px)); display: grid; grid-template-columns: 330px minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 52px; align-items: start; padding: 32px 0 44px; }
   .profile-column { grid-column: 1; grid-row: 1; align-self: stretch; min-width: 0; }
   .profile-panel { position: sticky; top: 32px; padding: 16px 16px 20px; }

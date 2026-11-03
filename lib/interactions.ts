@@ -8,6 +8,7 @@ export async function interactionRequest<T>(path: string, method = "GET", body?:
     method, credentials: "same-origin", cache: "no-store",
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(30_000),
   });
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || "Could not save or load interactions. Please try again.");
@@ -54,12 +55,18 @@ export function useInteractions() {
     writing.current = true;
     version.current++;
     setSaving(projectId);
+    const previous = interactions;
+    const current = interactions.find((item) => item.projectId === projectId);
+    const liked = !current?.liked;
+    const optimistic = { projectId, liked, like_count: Math.max(0, (current?.like_count ?? 0) + (liked ? 1 : -1)), comment_count: current?.comment_count ?? 0 };
+    setInteractions(current ? interactions.map((item) => item.projectId === projectId ? optimistic : item) : [...interactions, optimistic]);
+    setError("");
     try {
-      const liked = !interactions.find((item) => item.projectId === projectId)?.liked;
       const result = await interactionRequest<{ interactions: ProjectInteraction[] }>("interactions", "PUT", { projectId, liked });
       setInteractions(result.interactions);
       setError("");
     } catch (error) {
+      setInteractions(previous);
       setError(error instanceof Error ? error.message : "Could not save this reaction. Please try again.");
     } finally { writing.current = false; setSaving(null); }
   }

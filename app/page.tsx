@@ -3,6 +3,7 @@ import Portfolio from "./portfolio";
 import { redirect } from "next/navigation";
 import { projectReelUrl, routeSearchParams } from "@/lib/project-navigation";
 import { getGithubStats } from "@/lib/server/github";
+import { PageLoading } from "./loading-feedback";
 
 export default async function Home({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const params = routeSearchParams(await searchParams);
@@ -10,7 +11,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Rec
   if (legacyProject) redirect(projectReelUrl(legacyProject, params));
   const githubStats = await getGithubStats();
   return (
-    <Suspense fallback={<main className="loading-shell" aria-label="Loading portfolio" />}>
+    <Suspense fallback={<PageLoading />}>
       <Portfolio githubStats={githubStats} />
     </Suspense>
   );

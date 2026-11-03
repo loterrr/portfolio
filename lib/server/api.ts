@@ -5,19 +5,18 @@ import { openDatabase } from "./database.ts";
 import { openSupabaseDatabase } from "./supabase-database.ts";
 import { createInteractionApi } from "./interaction-api.ts";
 
-let database: ReturnType<typeof openDatabase> | ReturnType<typeof openSupabaseDatabase> | undefined;
+let database: Promise<Awaited<ReturnType<typeof openSupabaseDatabase>> | ReturnType<typeof openDatabase>> | undefined;
 
 function getDatabase() {
   if (!database) {
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    if (supabaseUrl && supabaseKey) {
-      database = openSupabaseDatabase(supabaseUrl, supabaseKey);
-    } else {
+    database = Promise.resolve().then(async () => {
+      const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      if (supabaseUrl && supabaseKey) return openSupabaseDatabase(supabaseUrl, supabaseKey, projects);
       const directory = join(process.cwd(), "data");
       mkdirSync(directory, { recursive: true });
-      database = openDatabase(join(directory, "scrollfolio.sqlite"), projects);
-    }
+      return openDatabase(join(directory, "scrollfolio.sqlite"), projects);
+    }).catch((error) => { database = undefined; throw error; });
   }
   return database;
 }

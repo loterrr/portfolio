@@ -3,18 +3,25 @@ import { randomUUID } from "node:crypto";
 import type { CommentPage, ProjectComment, ProjectInteraction } from "../interaction-types.ts";
 import { ApiError } from "./api-error.ts";
 
-export function openSupabaseDatabase(url: string, key: string) {
+export async function openSupabaseDatabase(url: string, key: string, catalog: { id: string; slug: string; title: string; status: "published" | "draft" }[]) {
   const supabase = createClient(url, key, {
     auth: { persistSession: false },
   });
 
+  const { error: catalogError } = await supabase.from("projects").upsert(catalog.map((project) => ({
+    id: project.id, slug: project.slug, title: project.title, status: project.status, data: JSON.stringify(project),
+  })), { onConflict: "id" });
+  if (catalogError) throw catalogError;
+
   async function requireProject(id: string) {
-    const { data } = await supabase.from("projects").select("id").eq("id", id).eq("status", "published").maybeSingle();
+    const { data, error } = await supabase.from("projects").select("id").eq("id", id).eq("status", "published").maybeSingle();
+    if (error) throw error;
     if (!data) throw new ApiError(404, "Project unavailable.");
   }
 
   async function hasVisitor(id: string) {
-    const { data } = await supabase.from("visitors").select("id").eq("id", id).maybeSingle();
+    const { data, error } = await supabase.from("visitors").select("id").eq("id", id).maybeSingle();
+    if (error) throw error;
     return Boolean(data);
   }
 
@@ -24,16 +31,18 @@ export function openSupabaseDatabase(url: string, key: string) {
 
   async function limit(visitorId: string, action: "like" | "comment", maximum: number) {
     const now = Date.now();
-    const { data: row } = await supabase.from("rate_limits").select("window_start, requests").eq("visitor_id", visitorId).eq("action", action).maybeSingle();
+    const { data: row, error: readError } = await supabase.from("rate_limits").select("window_start, requests").eq("visitor_id", visitorId).eq("action", action).maybeSingle();
+    if (readError) throw readError;
     const current = row && now - Number(row.window_start) < 60_000;
     if (current && Number(row.requests) >= maximum) throw new ApiError(429, "Please wait a minute before trying again.");
 
-    await supabase.from("rate_limits").upsert({
+    const { error } = await supabase.from("rate_limits").upsert({
       visitor_id: visitorId,
       action,
       window_start: current ? Number(row.window_start) : now,
       requests: current ? Number(row.requests) + 1 : 1,
     }, { onConflict: "visitor_id,action" });
+    if (error) throw error;
   }
 
   async function listInteractions(visitorId: string): Promise<ProjectInteraction[]> {
@@ -101,7 +110,8 @@ export function openSupabaseDatabase(url: string, key: string) {
     hasVisitor,
     async createVisitor() {
       const id = randomUUID();
-      await supabase.from("visitors").insert({ id, created_at: Date.now() });
+      const { error } = await supabase.from("visitors").insert({ id, created_at: Date.now() });
+      if (error) throw error;
       return id;
     },
     listInteractions,
@@ -111,9 +121,11 @@ export function openSupabaseDatabase(url: string, key: string) {
       await limit(visitorId, "like", 60);
 
       if (liked) {
-        await supabase.from("likes").upsert({ project_id: projectId, visitor_id: visitorId, created_at: Date.now() }, { onConflict: "project_id,visitor_id" });
+        const { error } = await supabase.from("likes").upsert({ project_id: projectId, visitor_id: visitorId, created_at: Date.now() }, { onConflict: "project_id,visitor_id" });
+        if (error) throw error;
       } else {
-        await supabase.from("likes").delete().eq("project_id", projectId).eq("visitor_id", visitorId);
+        const { error } = await supabase.from("likes").delete().eq("project_id", projectId).eq("visitor_id", visitorId);
+        if (error) throw error;
       }
       return listInteractions(visitorId);
     },

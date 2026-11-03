@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Code2, ImageIcon, Maximize2 } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import type { Project } from "@/lib/portfolio";
 import { validMediaUrl } from "@/lib/urls";
 import ImagePreview from "./image-preview";
+import LoadingFeedback from "./loading-feedback";
 
 export default function ProjectPreview({ project, active }: { project: Project; active: boolean }) {
   const images = (project.details.gallery ?? []).filter((image) => validMediaUrl(image.url));
@@ -21,10 +22,18 @@ export default function ProjectPreview({ project, active }: { project: Project; 
   const [expanded, setExpanded] = useState(false);
   const pointerStart = useRef<{ x: number; y: number; time: number } | null>(null);
   const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const [loadedUrls, setLoadedUrls] = useState<string[]>([]);
   const image = images[index];
+  const recordImage = useCallback((element: HTMLImageElement | null) => {
+    if (!element?.complete) return;
+    const url = element.getAttribute("src");
+    if (!url) return;
+    if (element.naturalWidth > 0) setLoadedUrls((current) => current.includes(url) ? current : [...current, url]);
+    else setFailedUrl(url);
+  }, []);
 
   useEffect(() => {
-    if (!active || expanded || hovered || focused || held || images.length < 2) return;
+    if (!active || expanded || hovered || focused || held || images.length < 2 || (!loadedUrls.includes(image.url) && failedUrl !== image.url)) return;
     const timer = window.setInterval(() => {
       if (!document.hidden) {
         setDirection(1);
@@ -32,7 +41,7 @@ export default function ProjectPreview({ project, active }: { project: Project; 
       }
     }, 3000);
     return () => window.clearInterval(timer);
-  }, [active, expanded, hovered, focused, held, images.length, index]);
+  }, [active, expanded, hovered, focused, held, images.length, index, image?.url, loadedUrls, failedUrl]);
 
   function move(direction: number) {
     setDirection(direction);
@@ -40,7 +49,6 @@ export default function ProjectPreview({ project, active }: { project: Project; 
   }
 
   return <>
-    {active && images.length > 1 && <link rel="preload" as="image" href={images[(index + 1) % images.length].url} />}
     <div className="reel-preview" role="region" aria-roledescription="carousel" aria-label={`${project.title} previews`}
     tabIndex={image ? 0 : undefined}
     aria-description={image ? images.length > 1 ? "Tap the center or press Enter to open the full image. Tap the edges or swipe to change preview. Hold to pause. Use Left and Right arrow keys when focused." : "Tap or press Enter to open the full image." : undefined}
@@ -84,13 +92,14 @@ export default function ProjectPreview({ project, active }: { project: Project; 
     {image ? failedUrl === image.url
       ? <div className="reel-preview-empty"><ImageIcon size={34} /><span>Image unavailable</span></div>
       : <AnimatePresence initial={false} custom={direction}>
-        <motion.img key={image.url} className="preview-image" src={image.url} alt={image.alt} draggable={false} loading={active ? "eager" : "lazy"} decoding="async" onError={() => setFailedUrl(image.url)}
+        <motion.img ref={recordImage} key={image.url} className="preview-image" src={image.url} alt={image.alt} draggable={false} loading={active ? "eager" : "lazy"} decoding="async" onLoad={(event) => recordImage(event.currentTarget)} onError={() => setFailedUrl(image.url)}
           custom={direction}
           variants={{ enter: (step: number) => ({ x: step > 0 ? "100%" : "-100%" }), visible: { x: "0%" }, exit: (step: number) => ({ x: step > 0 ? "-100%" : "100%" }) }}
           initial={reduceMotion ? false : "enter"} animate="visible" exit={reduceMotion ? { x: "0%" } : "exit"}
           transition={{ duration: reduceMotion ? 0 : 0.3, ease: "easeOut" }} />
       </AnimatePresence>
       : <div className="reel-preview-empty"><Code2 size={34} /><span>Project preview</span></div>}
+    {active && image && failedUrl !== image.url && !loadedUrls.includes(image.url) && <LoadingFeedback key={image.url} label="Loading preview" className="preview-loading" />}
     {image && failedUrl !== image.url && <button type="button" className="icon-button preview-expand" aria-label="Expand image preview" title="View full image" onClick={() => setExpanded(true)}><Maximize2 size={18} /></button>}
     {images.length > 1 && <>
       <div className="preview-dots" role="group" aria-label="Choose preview">{images.map((item, position) => <button type="button" key={item.url} className="preview-dot" aria-label={`Show preview ${position + 1} of ${images.length}`} aria-current={index === position ? "true" : undefined} onClick={() => { setDirection(position > index ? 1 : -1); setIndex(position); }}><span /></button>)}</div>

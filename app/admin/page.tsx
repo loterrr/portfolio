@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Trash2 } from "lucide-react";
 import { interactionRequest } from "@/lib/interactions";
 import type { CommentPage, ProjectComment } from "@/lib/interaction-types";
 import { projects } from "@/lib/portfolio";
+import LoadingFeedback from "../loading-feedback";
 
 export default function LocalCommentReview() {
   const [comments, setComments] = useState<ProjectComment[]>([]);
@@ -57,7 +58,7 @@ export default function LocalCommentReview() {
       <div><strong>{comment.name}</strong><small>{projects.find((project) => project.id === comment.projectId)?.title ?? "Archived project"} · {new Date(comment.createdAt).toLocaleString()}</small><p>{comment.body}</p></div>
       <div className="admin-actions">{comment.status === "pending" && <button disabled={saving !== null} onClick={() => void moderate(comment.id, "approved")}><Check size={14} /> Approve</button>}<button disabled={saving !== null} onClick={() => void moderate(comment.id, "deleted")}><Trash2 size={14} /> Delete</button></div>
     </article>)}</div>
-    {loading && <p className="muted-empty" role="status">Loading comments…</p>}
+    {loading && <LoadingFeedback label="Loading comments" />}
     {!loading && !error && !comments.length && <p className="muted-empty">No {status} comments.</p>}
     {!loading && cursor && <button className="text-link" onClick={() => void refresh(cursor)}>Load older comments</button>}
   </main>;

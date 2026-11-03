@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { AnimatePresence, MotionConfig, motion, useReducedMotion } from "motion/react";
 import {
   ArrowDown, ArrowLeft, ArrowRight, BriefcaseBusiness, Check,
-  Layers, Code2, Globe2, Heart, ImageIcon,
-  GitBranch, Mail, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
+  Layers, Code2, Heart, ImageIcon,
+  GitBranch, MessageCircle, MonitorPlay, Pause, Play, Search, UserRound,
   X,
 } from "lucide-react";
 import {
@@ -24,9 +24,10 @@ import Modal from "./modal";
 import TechStack from "./tech-stack";
 import ProjectDetails from "./project-details";
 import ProjectPreview from "./project-preview";
+import LoadingFeedback from "./loading-feedback";
 import ContactPanel from "./contact-panel";
 import BrandLogo from "./brand-logo";
-import ProfileCover from "./profile-cover";
+import ProfilePanel from "./profile-panel";
 import GithubSection from "./github-section";
 import { AboutSection, ExperienceSection } from "./portfolio-sections";
 
@@ -132,7 +133,7 @@ function CommentDrawer({ project, count, onClose }: { project: Project; count?: 
         <p className="drawer-project">{project.title}</p>
         <div className="comment-list">
           {comments.map((comment) => <article className="comment" key={comment.id}><div className="comment-avatar">{comment.name.slice(0, 1).toUpperCase()}</div><div><strong>{comment.name}</strong><p>{comment.body}</p><time dateTime={comment.createdAt}>{new Date(comment.createdAt).toLocaleDateString()}</time></div></article>)}
-          {loading && <p className="muted-empty" role="status">Loading comments…</p>}
+          {loading && <LoadingFeedback label="Loading comments" />}
           {!loading && !loadError && !comments.length && <p className="muted-empty">No approved comments yet. Leave the first one.</p>}
           {loadError && <p className="form-message" role="alert">{loadError} <button className="text-link" onClick={() => void refresh(cursor)}>Retry</button></p>}
           {!loading && !loadError && cursor && <button className="text-link" onClick={() => void refresh(cursor)}>Load older comments</button>}
@@ -142,6 +143,7 @@ function CommentDrawer({ project, count, onClose }: { project: Project; count?: 
           <label>Your comment<textarea value={body} onChange={(event) => setBody(event.target.value)} maxLength={1000} rows={4} required /></label>
           <label className="honeypot" aria-hidden="true">Website<input tabIndex={-1} value={website} onChange={(event) => setWebsite(event.target.value)} /></label>
           <button className="button button-primary" type="submit" disabled={saving}>{saving ? "Submitting…" : "Submit comment"} <ArrowRight size={16} /></button>
+          {saving && <LoadingFeedback label="Submitting comment" />}
           <p className="form-note">Comments are published after owner review.</p>
           {message && <p className="form-message" role="status">{message}</p>}
         </form>
@@ -158,19 +160,31 @@ export function Reels({
   const [paused, setPaused] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const initialSlug = useRef(selected.slug);
+  const selectedSlug = useRef(selected.slug);
   const reduceMotion = useReducedMotion();
   const filtered = useMemo(() => projects.filter((project) => project.status === "published" && (!category || project.category === category) && matchesTechnology(project, technology)), [category, technology]);
   const activeIndex = filtered.findIndex((project) => project.slug === selected.slug);
+  useEffect(() => { selectedSlug.current = selected.slug; }, [selected.slug]);
   const jumpTo = useCallback((index: number) => {
     const next = Math.max(0, Math.min(index, filtered.length - 1));
-    rootRef.current?.querySelectorAll<HTMLElement>("[data-slug]")[next]?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" });
+    const root = rootRef.current;
+    root?.scrollTo({ top: next * root.clientHeight, behavior: reduceMotion ? "auto" : "smooth" });
   }, [filtered.length, reduceMotion]);
 
   useEffect(() => {
     const root = rootRef.current;
     if (!root) return;
-    const active = root.querySelector<HTMLElement>(`[data-slug="${CSS.escape(initialSlug.current)}"]`);
-    active?.scrollIntoView({ block: "start", behavior: "auto" });
+    const index = filtered.findIndex((project) => project.slug === initialSlug.current);
+    root.scrollTo({ top: Math.max(0, index) * root.clientHeight, behavior: "auto" });
+    let height = root.clientHeight;
+    const resize = new ResizeObserver(() => {
+      if (root.clientHeight === height) return;
+      height = root.clientHeight;
+      const current = filtered.findIndex((project) => project.slug === selectedSlug.current);
+      root.scrollTo({ top: Math.max(0, current) * height, behavior: "auto" });
+    });
+    resize.observe(root);
+    return () => resize.disconnect();
   }, [filtered]);
 
   useEffect(() => {
@@ -265,6 +279,7 @@ export function Reels({
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (document.querySelector("dialog[open]") || (event.target instanceof Element && event.target.closest("input, textarea, select, [contenteditable=true]"))) return;
       if (commentsOpen || detailsOpen) { if (event.key === "Escape") { setCommentsOpen(false); setDetailsOpen(false); } return; }
       if (event.key === "Escape") onExit();
       if (["ArrowDown", "PageDown", "ArrowUp", "PageUp"].includes(event.key)) {
@@ -277,7 +292,8 @@ export function Reels({
   }, [activeIndex, commentsOpen, detailsOpen, jumpTo, onExit]);
 
   return (
-    <motion.main
+    <motion.section
+      aria-label="Project reels"
       className="reels-shell"
       initial={{ opacity: 0, scale: reduceMotion ? 1 : 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
@@ -309,7 +325,7 @@ export function Reels({
                 <div className="reel-copy"><span className="reel-handle">{profile.handle}</span><h1>{project.title}</h1><p className="reel-summary">{project.summary}</p><button className="text-link" onClick={() => setDetailsOpen(true)}>View Full Case Study <ArrowRight size={16} /></button><div className="tag-list">{project.tech_stack.slice(0, 6).map((tag) => <span className="tag" key={tag}><BrandLogo name={tag} size={13} />{tag}</span>)}{project.tech_stack.length > 6 && <button className="tag" onClick={() => setDetailsOpen(true)} aria-label={`View all ${project.tech_stack.length} technologies`}>+{project.tech_stack.length - 6} more</button>}</div><p className="reel-description">{[project.category, project.project_type, project.role, project.development_status].filter(Boolean).join(" · ")}</p></div>
               </div>
               <div className="interaction-rail" aria-label="Project actions">
-                <button className={`rail-action ${isLiked ? "is-liked" : ""}`} disabled={!reactions.ready || reactions.saving !== null} onClick={() => void reactions.like(project.id)} aria-pressed={isLiked}><span className="rail-icon"><Heart size={23} fill={isLiked ? "currentColor" : "none"} /></span><span>Like</span>{Boolean(interaction?.like_count) && <small>{formatCount(interaction!.like_count)}</small>}</button>
+                <button className={`rail-action ${isLiked ? "is-liked" : ""}`} disabled={!reactions.ready || reactions.saving !== null} onClick={() => void reactions.like(project.id)} aria-pressed={isLiked} aria-busy={reactions.saving === project.id}><span className="rail-icon"><Heart size={23} fill={isLiked ? "currentColor" : "none"} /></span><span>{isLiked ? "Liked" : "Like"}</span>{Boolean(interaction?.like_count) && <small>{formatCount(interaction!.like_count)}</small>}</button>
                 <button className="rail-action" onClick={() => setCommentsOpen(true)}><span className="rail-icon"><MessageCircle size={23} /></span><span>Comment</span>{Boolean(interaction?.comment_count) && <small>{formatCount(interaction!.comment_count)}</small>}</button>
                 {validLive && <button className="rail-action" onClick={() => window.open(project.live_url!, "_blank", "noopener,noreferrer")} aria-label="Open live project in a new tab"><span className="rail-icon"><MonitorPlay size={23} /></span><span>Live View</span></button>}
                 {validRepo && <button className="rail-action" onClick={() => window.open(project.repository_url!, "_blank", "noopener,noreferrer")} aria-label="Open source repository in a new tab"><span className="rail-icon"><Code2 size={23} /></span><span>Source</span></button>}
@@ -322,7 +338,8 @@ export function Reels({
       <AnimatePresence>{commentsOpen && <CommentDrawer project={selected} count={reactions.interactions.find((item) => item.projectId === selected.id)?.comment_count} onClose={() => setCommentsOpen(false)} />}</AnimatePresence>
       <AnimatePresence>{detailsOpen && <ProjectDetails project={selected} onClose={() => setDetailsOpen(false)} />}</AnimatePresence>
       {reactions.error && <div className="notice" role="alert">{reactions.error} <button className="text-link" onClick={() => void reactions.refresh()}>Retry</button></div>}
-    </motion.main>
+      {(!reactions.ready && !reactions.error || reactions.saving) && <LoadingFeedback key={reactions.saving ?? "initial"} label={reactions.saving ? "Saving reaction" : "Loading reactions"} className="reaction-loading" />}
+    </motion.section>
   );
 }
 
@@ -390,45 +407,13 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
     }
   }, [category, router]);
 
-  const publishedCount = projects.filter((project) => project.status === "published").length;
-  const technologyCount = technologyGroups.reduce((sum, group) => sum + group.technologies.length, 0);
   const totalLikes = reactions.ready ? reactions.interactions.reduce((sum, item) => sum + item.like_count, 0) : 0;
 
   return (
     <MotionConfig reducedMotion="user">
       <main className="app-frame">
         <a className="skip-link" href="#portfolio-content">Skip to content</a>
-        <div className="profile-column">
-        <aside className="profile-panel" aria-label="Developer profile">
-          <header className="topbar">
-            <a className="wordmark" href="/" aria-label="LOTER home"><Code2 size={18} /><span>LOTER</span></a>
-            <div className="top-actions">{process.env.NODE_ENV !== "production" && <a className="icon-button" href="/admin" aria-label="Open local comment moderation"><BriefcaseBusiness size={17} /></a>}</div>
-          </header>
-
-          <ProfileCover />
-
-          <section className="profile-intro">
-            <div className="profile-avatar"><img src={profile.avatarUrl} alt={`${profile.name} profile photo`} width={72} height={72} decoding="async" /></div>
-            <div className="profile-copy"><h1>{profile.name}</h1><p className="handle">{profile.handle}</p><p className="role">{profile.role}</p><span className={`availability ${profile.available === true ? "available" : ""}`}><span />{profile.available === null ? "Availability not set" : profile.available ? "Open to opportunities" : "Currently focused"}</span></div>
-          </section>
-
-          <section className="profile-summary">
-            <p className="bio">{profile.bio}</p>
-            <div className="profile-stats">
-              <div><strong>{publishedCount}</strong><span>Projects</span></div>
-              <div><strong>{technologyCount}</strong><span>Technologies</span></div>
-              {totalLikes > 0 && <div><strong>{formatCount(totalLikes)}</strong><span>Likes</span></div>}
-            </div>
-            <div className="profile-actions"><button className="button button-primary" onClick={() => setContactOpen(true)}>Contact Me</button>{validMediaUrl(profile.resumeUrl) ? <a className="button button-outline" href={profile.resumeUrl} download>Download CV</a> : <button className="button button-outline" disabled title="No résumé has been published">CV unavailable</button>}</div>
-            <div className="social-links">{[
-              ["GitHub", profile.socialLinks.github, <BrandLogo name="GitHub" size={17} key="github" />],
-              ["LinkedIn", profile.socialLinks.linkedin, <BrandLogo name="LinkedIn" size={17} key="linkedin" />],
-              ["Email", profile.email ? `mailto:${profile.email}` : "", <Mail size={17} key="email" />],
-              ["Website", profile.socialLinks.website, <Globe2 size={17} key="website" />],
-            ].filter(([label, href]) => label === "Email" ? Boolean(profile.email) : validExternalUrl(String(href))).map(([label, href, icon]) => <a key={String(label)} href={String(href)} target={String(href).startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" aria-label={String(label)}>{icon}</a>)}</div>
-          </section>
-        </aside>
-        </div>
+        <ProfilePanel totalLikes={totalLikes} onContact={() => setContactOpen(true)} />
 
         <div className="content-panel">
           <nav className="tabs" aria-label="Portfolio sections">{tabs.map((item) => {
