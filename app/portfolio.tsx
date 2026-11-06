@@ -387,7 +387,7 @@ export default function Portfolio({ githubStats }: { githubStats: GithubStats | 
   function selectTab(next: Tab) {
     window.history.replaceState(null, "", buildUrl({ tab: next }));
   }
-  function selectCategory(next: string) { router.replace(buildUrl({ category: next }), { scroll: false }); }
+  function selectCategory(next: string) { window.history.replaceState(null, "", buildUrl({ category: next })); }
   function selectTechnology(next: string, platform: "Web" | "Mobile") {
     setSearch("");
     const matchedCategory = next === "Git" ? "" : platform;
