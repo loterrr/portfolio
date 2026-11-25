@@ -60,7 +60,7 @@ export const projects: Project[] = [{
   tech_stack: ["React", "React Router", "Tailwind CSS", "Vercel"],
   thumbnail_url: "/media/projects/taybol/taybol-hero.png",
   demo_video_url: null,
-  live_url: "https://taybolar.vercel.app",
+  live_url: "https://taybol.vercel.app",
   repository_url: null,
   status: "published",
   project_type: "Mobile tabletop AR arcade",
